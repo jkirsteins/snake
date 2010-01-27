@@ -1,0 +1,7 @@
+#!/bin/bash
+mxmlc -load-config flex-config.xml ./src/snake.as -output ./bin/snake.swf
+cat > ./bin/snake << EOF
+#!/bin/bash
+flashplayer-dbg \`dirname \$0\`/snake.swf
+EOF
+chmod +x ./bin/snake
