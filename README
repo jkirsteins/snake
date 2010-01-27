@@ -1,0 +1,11 @@
+Instructions on how to get this show going:
+
+1. cp flex-config.xml{.template,}
+   vim flex-config.xml
+   %s/\/opt\/flex\/frameworks\//YOUR_FLEX_PATH\/frameworks/g
+
+2. Download http://download.macromedia.com/pub/flashplayer/updaters/10/flash_player_10_linux_dev.tar.gz
+   Link (or move) the debug binary to /usr/bin/flashplayer-dbg
+
+3. Execute the build script and run bin/snake
+
