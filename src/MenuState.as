@@ -13,11 +13,17 @@ package
 
 		public function MenuState()
 		{
+            this.add(new FlxSprite(0, 0, Images.MenuBG));
+
             this._elements = new Array();
 
             new MenuItem(this, "Play", function (): void { FlxG.switchState(PlayState); });
             new MenuItem(this, "Hall of Fame", function (): void { FlxG.log("Hall of Fame"); });
             new MenuItem(this, "Credits", function (): void { FlxG.log("Credits"); });
+
+            var title: FlxText = new FlxText(FlxG.width/2 - 40, FlxG.height - 60, FlxG.width/2, "amazosnake v0.1");
+            title.alignment = "right";
+            this.add(title);
 		}
 
         public function getIndex(): int
@@ -27,8 +33,8 @@ package
 
         public function addItem(item: MenuItem): void
         {
-            item.x = 10;
-            item.y = FlxG.height - 200 + _elements.length * 10;
+            item.x = 40;
+            item.y = FlxG.height - 70 + _elements.length * 10;
             item.alignment = "left";
 
             item.normalColor = 0x444444;
