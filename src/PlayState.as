@@ -1,30 +1,38 @@
 package
 {
 	import org.flixel.*;
-    import flash.geom.Point;
+    import flash.geom.*;
 
 	public class PlayState extends FlxState
 	{
-        public var gameAreaWidth:int = 80;
-        public var gameAreaHeight:int = 60;
-
+        // Level variables 
+        public var gameAreaWidth:int = 40;
+        public var gameAreaHeight:int = 30;
+        public var doWrap:Boolean = true;
+        private var levelCollision:Array = new Array(
+                gameAreaWidth * gameAreaHeight);
+        private var levelSprites:Array = new Array(
+                gameAreaWidth * gameAreaHeight);
+        private var levelImage:buttSprite = null;
+        
+        // Food variables
         private var curFood:buttSprite = null;
-
+        
+        // Snake Variables
+        private var snake:Array = new Array();
         private var curVector:Point = new Point(1, 0);
         private var growCycles:int = 0;
 
-        public var doWrap:Boolean = true;
-        private var snake:Array = new Array();
-
+        // Keep track of time
         private var t:Number = 0.0;
 
 		public function PlayState()
 		{
-            for (x = 0; x < 4; x++) {
-                snake[x] = new buttSprite(96 - x * 4, 
-                    int(gameAreaHeight / 2) * 4);
-            }
-            
+            // Load our level image
+            this.levelImage = new buttSprite(0, 0, Images.LevelImg);
+            // Load our level into an array
+            loadLevel(2);
+
             makeNomNom();
 		}
 
@@ -37,9 +45,78 @@ package
                 moveSnake();
                 t = 0.0;
             }
+            renderLevel();
             renderSnake();
 
             curFood.render();
+        }
+
+        private function loadLevel(num:uint):void
+        {
+            // Figure out the original syntax
+            var snakeStart:Point = null;
+            var snakeEnd:Point = null;
+            for (var gY:uint = gameAreaHeight * num; gY < gameAreaHeight * 
+                    (num + 1); gY++) {
+                for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
+                    var val:uint = levelImage.getPixel(gX, gY); 
+
+                    if (val == 0xFFFFFF) {
+                        levelCollision[gY % (gameAreaHeight) * 
+                                gameAreaWidth + gX] = 0;
+                        levelSprites[gY % (gameAreaHeight) * 
+                                gameAreaWidth + gX] = null;
+                    } else if (val == 0x000000) {
+                        levelCollision[gY % (gameAreaHeight) * 
+                                gameAreaWidth + gX] = 1;
+                        levelSprites[gY % (gameAreaHeight) *
+                                gameAreaWidth + gX] = new buttSprite(gX * 8,
+                                gY % gameAreaHeight * 8);
+                    } else if (val == 0xFF0000) {
+                        levelCollision[gY % (gameAreaHeight) * 
+                                gameAreaWidth + gX] = 0;
+                        snakeStart = new Point(gX, gY % gameAreaHeight - 1);
+                    } else if (val == 0x0000FF) {
+                        levelCollision[gY % (gameAreaHeight) * 
+                                gameAreaWidth + gX] = 0;
+                        snakeEnd = new Point(gX, gY % gameAreaHeight - 1);
+                    }
+                }
+            }
+
+            // Create a new snake
+            this.snake = new Array();
+            
+            // Direction vector
+            var v:Point = new Point(snakeEnd.x - snakeStart.x,
+                    snakeEnd.y - snakeStart.y);
+
+            var length:Number = Math.sqrt(v.x * v.x + 
+                    v.y * v.y);
+            v.x = v.x / length;
+            v.y = v.y / length;
+            this.curVector.x = -1 * v.x;
+            this.curVector.y = -1 * v.y;
+
+            // Create our snake elements
+            for (var j:Number = 0; j < length + 1; j++) {
+                var curPos:Point = new Point(snakeStart.x + (v.x * j),
+                        snakeStart.y + (v.y * j));
+                snake.push(new buttSprite(curPos.x * 8, curPos.y * 8));
+            }
+        }
+
+        private function renderLevel():void
+        {
+            for (var gY:uint = 0; gY < gameAreaHeight; gY++) {
+                for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
+                    var index:Number = gY * gameAreaWidth + gX;
+                    if (this.levelCollision[index] == 1) {
+                        this.levelSprites[index].render();
+                        trace(gX, gY);
+                    }
+                }
+            }
         }
 
         private function getInput():void
@@ -70,22 +147,26 @@ package
             }
         }
 
+        private function isColliding(x:int, y:int):Boolean
+        {
+            var index:int = y * gameAreaWidth + x;
+            if (this.levelCollision[index] != 0) {
+                return true;
+            }
+            return false;
+        }
+
         private function moveSnake():void
         {
-            var newX:int = snake[0].x + curVector.x * 4;
-            var newY:int = snake[0].y + curVector.y * 4;
-            trace(newX, newY);
+            var newX:int = snake[0].x + curVector.x * 8;
+            var newY:int = snake[0].y + curVector.y * 8;
+
 
             if (newX == curFood.x && newY == curFood.y) {
                 growCycles += 3;
                 makeNomNom();
             }
 
-            if (growCycles > 0) {
-                growCycles -= 1;
-            } else {
-                snake.pop();
-            }
 
             var hasWrapped:Boolean = false;
 
@@ -93,21 +174,32 @@ package
                 newX = 0;
                 hasWrapped = true;
             }
-            if (newX == -4 && doWrap && !hasWrapped) {
-                newX = 320 - 4;
+            if (newX == -8 && doWrap && !hasWrapped) {
+                newX = 320 - 8;
                 hasWrapped = true;
             }
             if (newY == 240 && doWrap && !hasWrapped) {
                 newY = 0;
                 hasWrapped = true;
             }
-            if (newY == -4 && doWrap && !hasWrapped) {
-                newY = 240 - 4;
+            if (newY == -8 && doWrap && !hasWrapped) {
+                newY = 240 - 8;
                 hasWrapped = true;
             }
 
+            if (isColliding(newX / 8, newY / 8)) {
+                this.curVector = new Point(0, 0);
+                return;
+            }
+            trace(newX, newY);
+
             /* Has wrapped basically mean we've collided as well,
                Just exploit this :P */
+            if (growCycles > 0) {
+                growCycles -= 1;
+            } else {
+                snake.pop();
+            }
 
             snake.unshift(new buttSprite(newX, newY));
         }
@@ -126,15 +218,16 @@ package
 
         private function makeNomNom():void
         {
-            var newX:int = randomNumber(0, gameAreaWidth / 2 - 1) * 4;
-            var newY:int = randomNumber(0, gameAreaHeight - 1) * 4;
-
-            for (y = 0; y < snake.length; y++) {
-                if (newX == snake[y].x && newY == snake[y].y) {
-                    makeNomNom();
-                    return;
-                }
+            var newX:int = randomNumber(0, gameAreaWidth);
+            var newY:int = randomNumber(0, gameAreaHeight);
+        
+            if (isColliding(newX, newY)) {
+                makeNomNom();
+                return;
             }
+
+            newX = newX * 8;
+            newY = newY * 8;
 
             curFood = new buttSprite(newX, newY);
             curFood.color = 0xFF0000;

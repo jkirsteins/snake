@@ -9,8 +9,11 @@ package
                 SimpleGraphic:Class = null)
         {
             super(X, Y, SimpleGraphic);
-            this.scale = new Point(0.5, 0.5);
-            this.offset = new Point(2, 2);
+        }
+
+        public function getPixel(x:int, y:int):uint
+        {
+            return this._pixels.getPixel(x, y);
         }
     }
 }
