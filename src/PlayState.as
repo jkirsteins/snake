@@ -113,7 +113,6 @@ package
                     var index:Number = gY * gameAreaWidth + gX;
                     if (this.levelCollision[index] == 1) {
                         this.levelSprites[index].render();
-                        trace(gX, gY);
                     }
                 }
             }
@@ -188,17 +187,20 @@ package
             }
 
             if (isColliding(newX / 8, newY / 8)) {
-                this.curVector = new Point(0, 0);
                 return;
+            } else {
+                this.levelCollision[(newY / 8) *
+                        gameAreaWidth + (newX / 8)] = 2;
             }
-            trace(newX, newY);
 
             /* Has wrapped basically mean we've collided as well,
                Just exploit this :P */
             if (growCycles > 0) {
                 growCycles -= 1;
             } else {
-                snake.pop();
+                var tmp:buttSprite = snake.pop();
+                this.levelCollision[(tmp.y / 8) * gameAreaWidth 
+                        + (tmp.x / 8)] = 0;
             }
 
             snake.unshift(new buttSprite(newX, newY));
