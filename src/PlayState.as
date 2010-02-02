@@ -120,6 +120,9 @@ package
 
         private function getInput():void
         {
+            if (FlxG.keys.justPressed("ESC"))
+                FlxG.switchState(MenuState);
+
             if (FlxG.keys.UP) {
                 if (!curVector.x == 0 || !curVector.y == 1) {
                     curVector.x = 0;
