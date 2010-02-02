@@ -19,10 +19,9 @@ package
 
             new MenuItem(this, "Play", function (): void { FlxG.switchState(PlayState); });
             new MenuItem(this, "Hall of Fame", function (): void { FlxG.log("Hall of Fame"); });
-            new MenuItem(this, "Credits", function (): void { FlxG.log("Credits"); });
 
-            var title: FlxText = new FlxText(FlxG.width/2 - 40, FlxG.height - 60, FlxG.width/2, "amazosnake v0.1");
-            title.alignment = "right";
+            var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.1");
+            title.alignment = "left";
             this.add(title);
 		}
 
