@@ -41,7 +41,7 @@ package
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
             // Figure out how many levels there are
-            this.levelCount = this.levelImage.height / gameAreaHeight;
+            this.levelCount = this.levelImage.height / gameAreaHeight - 1;
             // Load our level into an array
             loadLevel(currentLevel);
 
