@@ -5,6 +5,10 @@ package
 
 	public class PlayState extends FlxState
 	{
+        // Keeping track of stuff
+        public var score:uint = 0;
+        private var dead:Boolean = false;
+
         // Level variables 
         public var gameAreaWidth:int = 40;
         public var gameAreaHeight:int = 30;
@@ -15,6 +19,7 @@ package
                 gameAreaWidth * gameAreaHeight);
         private var levelImage:buttSprite = null;
 
+        private var levelCount:uint = 0;
         private var currentLevel:uint = 3;
         private var newLevelState:Boolean = true;
         
@@ -23,8 +28,9 @@ package
         
         // Snake Variables
         private var snake:Array = new Array();
-        private var curVector:Point = new Point(1, 0);
         private var growCycles:int = 0;
+        private var curVector:Point = new Point(1, 0);
+        private var tmpVector:Point = new Point(1, 0);
 
         // Keep track of time
         private var t:Number = 0.0;
@@ -33,6 +39,8 @@ package
 		{
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
+            // Figure out how many levels there are
+            this.levelCount = this.levelImage.height / gameAreaHeight;
             // Load our level into an array
             loadLevel(currentLevel);
 
@@ -43,38 +51,63 @@ package
         {
             getInput();
 
-            if (!this.newLevelState) {
+            if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
-                if (t > 0.05) {
+                if (t > 0.2) {
+                    this.curVector.x = this.tmpVector.x;
+                    this.curVector.y = this.tmpVector.y;
                     moveSnake();
                     t = 0.0;
                 }
- 
-                curFood.render();
             }
  
+            curFood.render();
             renderLevel();
             renderSnake();
            
             if (this.newLevelState) {
-                // Horribly bad, but i don't care. :P
                 var text:String = new String("Level ")
                 text = text.concat(currentLevel + 1);
-                var levelTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, text);
+                var levelTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, 
+                        text);
                 levelTitle.alignment = "center";
+                levelTitle.color = 0x00FF00;
                 levelTitle.render();
-                text = new String("Press space to begin")
+                text = new String("Press space to begin");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, text);
                 levelTitle.alignment = "center";
+                levelTitle.color = 0x00FF00;
+                levelTitle.render();
+            } else if (this.dead) {
+                var scoreText:String = new String("Score: ");
+                scoreText = scoreText.concat(score);
+                var scoreTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, 
+                        scoreText);
+                scoreTitle.alignment = "center";
+                scoreTitle.color = 0xFF0000;
+                scoreTitle.render();
+                scoreText = new String("Press space to go back to the menu");
+                levelTitle = new FlxText(0, 240*0.5 + 5, 320, scoreText);
+                levelTitle.alignment = "center";
+                levelTitle.color = 0xFF0000;
                 levelTitle.render();
 
             }
 
         }
 
+        private function clearedLevel():void
+        {
+            if (this.currentLevel < this.levelCount) {
+                this.currentLevel += 1;
+                this.newLevelState = true;
+                loadLevel(this.currentLevel);
+            }
+        }
+
         private function died():void
         {
-            FlxG.switchState(MenuState);
+            this.dead = true;
         }
 
         private function loadLevel(num:uint):void
@@ -87,24 +120,21 @@ package
                 for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
                     var val:uint = levelImage.getPixel(gX, gY); 
 
+                    var index:int = gY % (gameAreaHeight) * 
+                            gameAreaWidth + gX;
+
                     if (val == 0xFFFFFF) {
-                        levelCollision[gY % (gameAreaHeight) * 
-                                gameAreaWidth + gX] = 0;
-                        levelSprites[gY % (gameAreaHeight) * 
-                                gameAreaWidth + gX] = null;
+                        levelCollision[index] = 0;
+                        levelSprites[index] = null;
                     } else if (val == 0x000000) {
-                        levelCollision[gY % (gameAreaHeight) * 
-                                gameAreaWidth + gX] = 1;
-                        levelSprites[gY % (gameAreaHeight) *
-                                gameAreaWidth + gX] = new buttSprite(gX * 8,
+                        levelCollision[index] = 1;
+                        levelSprites[index] = new buttSprite(gX * 8,
                                 gY % gameAreaHeight * 8);
                     } else if (val == 0xFF0000) {
-                        levelCollision[gY % (gameAreaHeight) * 
-                                gameAreaWidth + gX] = 0;
+                        levelCollision[index] = 0;
                         snakeStart = new Point(gX, gY % gameAreaHeight - 1);
                     } else if (val == 0x0000FF) {
-                        levelCollision[gY % (gameAreaHeight) * 
-                                gameAreaWidth + gX] = 0;
+                        levelCollision[index] = 0;
                         snakeEnd = new Point(gX, gY % gameAreaHeight - 1);
                     }
                 }
@@ -157,28 +187,35 @@ package
                 return;
             }
 
+            if (this.dead) {
+                if (FlxG.keys.justPressed('SPACE')) {
+                    FlxG.switchState(MenuState);
+                }
+                return;
+            }
+
             if (FlxG.keys.justPressed('UP')) {
-                if (!curVector.x == 0 || !curVector.y == 1) {
-                    curVector.x = 0;
-                    curVector.y = -1;
+                if (curVector.y != 1) {
+                    tmpVector.x = 0;
+                    tmpVector.y = -1;
                 }
             }
             if (FlxG.keys.justPressed('DOWN')) {
-                if (!curVector.x == 0 || !curVector.y == -1) {
-                    curVector.x = 0;
-                    curVector.y = 1;
+                if (curVector.y != -1) {
+                    tmpVector.x = 0;
+                    tmpVector.y = 1;
                 }
             }
             if (FlxG.keys.justPressed('LEFT')) {
-                if (!curVector.x == 1 || !curVector.y == 0) {
-                    curVector.x = -1;
-                    curVector.y = 0;
+                if (curVector.x != 1) {
+                    tmpVector.x = -1;
+                    tmpVector.y = 0;
                 }
             }
             if (FlxG.keys.justPressed('RIGHT')) {
-                if (!curVector.x == -1 || !curVector.y == 0) {
-                    curVector.x = 1;
-                    curVector.y = 0;
+                if (curVector.x != -1) {
+                    tmpVector.x = 1;
+                    tmpVector.y = 0;
                 }
             }
         }
@@ -199,7 +236,8 @@ package
 
 
             if (newX == curFood.x && newY == curFood.y) {
-                growCycles += 3;
+                this.score += 100;
+                this.growCycles += 3;
                 makeNomNom();
             }
 
@@ -225,13 +263,12 @@ package
 
             if (isColliding(newX / 8, newY / 8)) {
                 died();
+                return;
             } else {
                 this.levelCollision[(newY / 8) *
                         gameAreaWidth + (newX / 8)] = 2;
             }
 
-            /* Has wrapped basically mean we've collided as well,
-               Just exploit this :P */
             if (growCycles > 0) {
                 growCycles -= 1;
             } else {
