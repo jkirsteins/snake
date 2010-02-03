@@ -7,6 +7,7 @@ package
 	{
         // Keeping track of stuff
         public var score:uint = 0;
+        private var hasEaten:Boolean = false;
         private var dead:Boolean = false;
 
         // Level variables 
@@ -20,7 +21,7 @@ package
         private var levelImage:buttSprite = null;
 
         private var levelCount:uint = 0;
-        private var currentLevel:uint = 3;
+        private var currentLevel:uint = 0;
         private var newLevelState:Boolean = true;
         
         // Food variables
@@ -53,15 +54,15 @@ package
 
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
-                if (t > 0.2) {
+                if (t > 0.15) {
                     this.curVector.x = this.tmpVector.x;
                     this.curVector.y = this.tmpVector.y;
                     moveSnake();
                     t = 0.0;
                 }
+                curFood.render();
             }
  
-            curFood.render();
             renderLevel();
             renderSnake();
            
@@ -99,9 +100,12 @@ package
         private function clearedLevel():void
         {
             if (this.currentLevel < this.levelCount) {
+                this.t = 0.0;
                 this.currentLevel += 1;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
+            } else {
+                FlxG.switchState(MenuState);
             }
         }
 
@@ -112,6 +116,7 @@ package
 
         private function loadLevel(num:uint):void
         {
+            this.hasEaten = false;
             // Figure out the original syntax
             var snakeStart:Point = null;
             var snakeEnd:Point = null;
@@ -153,6 +158,8 @@ package
             v.y = v.y / length;
             this.curVector.x = -1 * v.x;
             this.curVector.y = -1 * v.y;
+            this.tmpVector.x = this.curVector.x;
+            this.tmpVector.y = this.curVector.y;
 
             // Create our snake elements
             for (var j:Number = 0; j < length + 1; j++) {
@@ -196,26 +203,26 @@ package
 
             if (FlxG.keys.justPressed('UP')) {
                 if (curVector.y != 1) {
-                    tmpVector.x = 0;
-                    tmpVector.y = -1;
+                    this.tmpVector.x = 0;
+                    this.tmpVector.y = -1;
                 }
             }
             if (FlxG.keys.justPressed('DOWN')) {
                 if (curVector.y != -1) {
-                    tmpVector.x = 0;
-                    tmpVector.y = 1;
+                    this.tmpVector.x = 0;
+                    this.tmpVector.y = 1;
                 }
             }
             if (FlxG.keys.justPressed('LEFT')) {
-                if (curVector.x != 1) {
-                    tmpVector.x = -1;
-                    tmpVector.y = 0;
+                if (this.curVector.x != 1) {
+                    this.tmpVector.x = -1;
+                    this.tmpVector.y = 0;
                 }
             }
             if (FlxG.keys.justPressed('RIGHT')) {
                 if (curVector.x != -1) {
-                    tmpVector.x = 1;
-                    tmpVector.y = 0;
+                    this.tmpVector.x = 1;
+                    this.tmpVector.y = 0;
                 }
             }
         }
@@ -237,6 +244,11 @@ package
 
             if (newX == curFood.x && newY == curFood.y) {
                 this.score += 100;
+                this.hasEaten = true;
+                if ((this.score % 200 == 0) && (this.hasEaten)) {
+                    clearedLevel();
+                    return;
+                }
                 this.growCycles += 3;
                 makeNomNom();
             }
