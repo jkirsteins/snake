@@ -23,6 +23,8 @@ package
         private var levelCount:uint = 0;
         private var currentLevel:uint = 0;
         private var newLevelState:Boolean = true;
+
+        private var speedUp:Number = 0.0;
         
         // Food variables
         private var curFood:buttSprite = null;
@@ -54,7 +56,7 @@ package
 
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
-                if (t > 0.15) {
+                if (t > 0.03 - speedUp) {
                     this.curVector.x = this.tmpVector.x;
                     this.curVector.y = this.tmpVector.y;
                     moveSnake();
@@ -102,6 +104,7 @@ package
             if (this.currentLevel < this.levelCount) {
                 this.t = 0.0;
                 this.currentLevel += 1;
+                this.speedUp += 0.0;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
             } else {
@@ -137,10 +140,10 @@ package
                                 gY % gameAreaHeight * 8);
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
-                        snakeStart = new Point(gX, gY % gameAreaHeight - 1);
+                        snakeStart = new Point(gX, gY % gameAreaHeight);
                     } else if (val == 0x0000FF) {
                         levelCollision[index] = 0;
-                        snakeEnd = new Point(gX, gY % gameAreaHeight - 1);
+                        snakeEnd = new Point(gX, gY % gameAreaHeight);
                     }
                 }
             }
@@ -240,20 +243,6 @@ package
         {
             var newX:int = snake[0].x + curVector.x * 8;
             var newY:int = snake[0].y + curVector.y * 8;
-
-
-            if (newX == curFood.x && newY == curFood.y) {
-                this.score += 100;
-                this.hasEaten = true;
-                if ((this.score % 200 == 0) && (this.hasEaten)) {
-                    clearedLevel();
-                    return;
-                }
-                this.growCycles += 3;
-                makeNomNom();
-            }
-
-
             var hasWrapped:Boolean = false;
 
             if (newX == 320 && doWrap) {
@@ -271,6 +260,17 @@ package
             if (newY == -8 && doWrap && !hasWrapped) {
                 newY = 240 - 8;
                 hasWrapped = true;
+            }
+
+            if (newX == curFood.x && newY == curFood.y) {
+                this.score += 100;
+                this.hasEaten = true;
+                if ((this.score % 200 == 0) && (this.hasEaten)) {
+                    clearedLevel();
+                    return;
+                }
+                this.growCycles += 3;
+                makeNomNom();
             }
 
             if (isColliding(newX / 8, newY / 8)) {
