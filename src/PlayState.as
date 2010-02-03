@@ -14,6 +14,9 @@ package
         private var levelSprites:Array = new Array(
                 gameAreaWidth * gameAreaHeight);
         private var levelImage:buttSprite = null;
+
+        private var currentLevel:uint = 3;
+        private var newLevelState:Boolean = true;
         
         // Food variables
         private var curFood:buttSprite = null;
@@ -31,7 +34,7 @@ package
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
             // Load our level into an array
-            loadLevel(2);
+            loadLevel(currentLevel);
 
             makeNomNom();
 		}
@@ -40,15 +43,38 @@ package
         {
             getInput();
 
-            t += FlxG.elapsed;
-            if (t > 0.05) {
-                moveSnake();
-                t = 0.0;
+            if (!this.newLevelState) {
+                t += FlxG.elapsed;
+                if (t > 0.05) {
+                    moveSnake();
+                    t = 0.0;
+                }
+ 
+                curFood.render();
             }
+ 
             renderLevel();
             renderSnake();
+           
+            if (this.newLevelState) {
+                // Horribly bad, but i don't care. :P
+                var text:String = new String("Level ")
+                text = text.concat(currentLevel + 1);
+                var levelTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, text);
+                levelTitle.alignment = "center";
+                levelTitle.render();
+                text = new String("Press space to begin")
+                levelTitle = new FlxText(0, 240*0.5 + 5, 320, text);
+                levelTitle.alignment = "center";
+                levelTitle.render();
 
-            curFood.render();
+            }
+
+        }
+
+        private function died():void
+        {
+            FlxG.switchState(MenuState);
         }
 
         private function loadLevel(num:uint):void
@@ -103,6 +129,7 @@ package
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
                 snake.push(new buttSprite(curPos.x * 8, curPos.y * 8));
+                this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
         }
 
@@ -123,25 +150,32 @@ package
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
 
-            if (FlxG.keys.UP) {
+            if (this.newLevelState) {
+                if (FlxG.keys.justPressed('SPACE')) {
+                    this.newLevelState = false;
+                }
+                return;
+            }
+
+            if (FlxG.keys.justPressed('UP')) {
                 if (!curVector.x == 0 || !curVector.y == 1) {
                     curVector.x = 0;
                     curVector.y = -1;
                 }
             }
-            if (FlxG.keys.DOWN) {
+            if (FlxG.keys.justPressed('DOWN')) {
                 if (!curVector.x == 0 || !curVector.y == -1) {
                     curVector.x = 0;
                     curVector.y = 1;
                 }
             }
-            if (FlxG.keys.LEFT) {
+            if (FlxG.keys.justPressed('LEFT')) {
                 if (!curVector.x == 1 || !curVector.y == 0) {
                     curVector.x = -1;
                     curVector.y = 0;
                 }
             }
-            if (FlxG.keys.RIGHT) {
+            if (FlxG.keys.justPressed('RIGHT')) {
                 if (!curVector.x == -1 || !curVector.y == 0) {
                     curVector.x = 1;
                     curVector.y = 0;
@@ -190,7 +224,7 @@ package
             }
 
             if (isColliding(newX / 8, newY / 8)) {
-                return;
+                died();
             } else {
                 this.levelCollision[(newY / 8) *
                         gameAreaWidth + (newX / 8)] = 2;

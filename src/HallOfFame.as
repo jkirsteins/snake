@@ -8,7 +8,7 @@ package
 		{
         }
 
-        static public function register_score(score: uint):void
+        static public function setScore(score: uint):void
         {
             FlxG.log(score);
         }
