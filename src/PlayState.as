@@ -7,7 +7,8 @@ package
 	{
         // Keeping track of stuff
         public var score:uint = 0;
-        private var hasEaten:Boolean = false;
+        private var hasEaten:uint = 0;
+        private var mustEat:uint = 3;
         private var dead:Boolean = false;
 
         // Level variables 
@@ -18,7 +19,10 @@ package
                 gameAreaWidth * gameAreaHeight);
         private var levelSprites:Array = new Array(
                 gameAreaWidth * gameAreaHeight);
+        private var levelExits:Array = new Array(
+                gameAreaWidth * gameAreaHeight);
         private var levelImage:buttSprite = null;
+        private var showExits:Boolean = false;
 
         private var levelCount:uint = 0;
         private var currentLevel:uint = 0;
@@ -55,7 +59,7 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 curFood.render();
                 t += FlxG.elapsed;
-                if (t > 0.03 - speedUp) {
+                if (t > 0.06 - speedUp) {
                     this.curVector.x = this.tmpVector.x;
                     this.curVector.y = this.tmpVector.y;
                     moveSnake();
@@ -101,8 +105,8 @@ package
         {
             if (this.currentLevel < this.levelCount) {
                 this.t = 0.0;
+                this.speedUp += 0.03 / this.levelCount;
                 this.currentLevel += 1;
-                this.speedUp += 0.0;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
             } else {
@@ -117,7 +121,8 @@ package
 
         private function loadLevel(num:uint):void
         {
-            this.hasEaten = false;
+            this.hasEaten = 0;
+            this.showExits = false;
             // Figure out the original syntax
             var snakeStart:Point = null;
             var snakeEnd:Point = null;
@@ -128,7 +133,9 @@ package
 
                     var index:int = gY % (gameAreaHeight) * 
                             gameAreaWidth + gX;
-
+                    
+                    // Make sure we fill levelExits with null
+                    this.levelExits[index] = null;
                     if (val == 0xFFFFFF) {
                         levelCollision[index] = 0;
                         levelSprites[index] = null;
@@ -142,6 +149,14 @@ package
                     } else if (val == 0x0000FF) {
                         levelCollision[index] = 0;
                         snakeEnd = new Point(gX, gY % gameAreaHeight);
+                    } else if (val == 0x00FF00) {
+                        var tmpSprite:buttSprite = new buttSprite(gX * 8,
+                                gY % gameAreaHeight * 8);
+                        tmpSprite.color = 0x00FF00;
+                        levelCollision[index] = 3;
+                        levelExits[index] = tmpSprite;
+                        levelSprites[index] = new buttSprite(gX * 8,
+                                gY % gameAreaHeight * 8);
                     }
                 }
             }
@@ -177,9 +192,15 @@ package
         {
             for (var gY:uint = 0; gY < gameAreaHeight; gY++) {
                 for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
-                    var index:Number = gY * gameAreaWidth + gX;
-                    if (this.levelCollision[index] == 1) {
-                        this.levelSprites[index].render();
+                    var index:int = gY * gameAreaWidth + gX;
+                    var tileVal:int = this.levelCollision[index];
+
+                    if (tileVal != 0) {
+                        if ((this.showExits) && (tileVal == 3)) {
+                            this.levelExits[index].render();
+                        } else if (tileVal != 2) {
+                            this.levelSprites[index].render();
+                        }
                     }
                 }
             }
@@ -209,20 +230,17 @@ package
                     this.tmpVector.x = 0;
                     this.tmpVector.y = -1;
                 }
-            }
-            if (FlxG.keys.justPressed('DOWN')) {
+            } else if (FlxG.keys.justPressed('DOWN')) {
                 if (curVector.y != -1) {
                     this.tmpVector.x = 0;
                     this.tmpVector.y = 1;
                 }
-            }
-            if (FlxG.keys.justPressed('LEFT')) {
+            } else if (FlxG.keys.justPressed('LEFT')) {
                 if (this.curVector.x != 1) {
                     this.tmpVector.x = -1;
                     this.tmpVector.y = 0;
                 }
-            }
-            if (FlxG.keys.justPressed('RIGHT')) {
+            } else if (FlxG.keys.justPressed('RIGHT')) {
                 if (curVector.x != -1) {
                     this.tmpVector.x = 1;
                     this.tmpVector.y = 0;
@@ -264,17 +282,21 @@ package
 
             if (newX == curFood.x && newY == curFood.y) {
                 this.score += 100;
-                this.hasEaten = true;
-                if ((this.score % 200 == 0) && (this.hasEaten)) {
-                    clearedLevel();
-                    return;
-                }
+                this.hasEaten += 1;
                 this.growCycles += 3;
+                if (this.hasEaten == this.mustEat) {
+                    this.showExits = true;
+                }
                 makeNomNom();
             }
 
             if (isColliding(newX / 8, newY / 8)) {
-                died();
+                if ((this.levelCollision[(newY / 8) *
+                        gameAreaWidth + (newX / 8)] == 3) && this.showExits) {
+                    clearedLevel();
+                } else {
+                    died();
+                }
                 return;
             } else {
                 this.levelCollision[(newY / 8) *
