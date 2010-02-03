@@ -46,8 +46,6 @@ package
             this.levelCount = this.levelImage.height / gameAreaHeight - 1;
             // Load our level into an array
             loadLevel(currentLevel);
-
-            makeNomNom();
 		}
 
         public override function update():void
@@ -55,6 +53,7 @@ package
             getInput();
 
             if ((!this.newLevelState) && (!this.dead)) {
+                curFood.render();
                 t += FlxG.elapsed;
                 if (t > 0.03 - speedUp) {
                     this.curVector.x = this.tmpVector.x;
@@ -62,7 +61,6 @@ package
                     moveSnake();
                     t = 0.0;
                 }
-                curFood.render();
             }
  
             renderLevel();
@@ -171,6 +169,8 @@ package
                 snake.push(new buttSprite(curPos.x * 8, curPos.y * 8));
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
+
+            makeNomNom();
         }
 
         private function renderLevel():void
