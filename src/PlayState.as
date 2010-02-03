@@ -8,8 +8,12 @@ package
         // Keeping track of stuff
         public var score:uint = 0;
         private var hasEaten:uint = 0;
-        private var mustEat:uint = 3;
+        private var mustEat:uint = 8;
         private var dead:Boolean = false;
+        private var newLevelState:Boolean = true;
+        private var currentLevel:uint = 0;
+        private var showExits:Boolean = false;
+        private var speedUp:Number = 0.0;
 
         // Level variables 
         public var gameAreaWidth:int = 40;
@@ -22,13 +26,8 @@ package
         private var levelExits:Array = new Array(
                 gameAreaWidth * gameAreaHeight);
         private var levelImage:buttSprite = null;
-        private var showExits:Boolean = false;
-
         private var levelCount:uint = 0;
-        private var currentLevel:uint = 0;
-        private var newLevelState:Boolean = true;
 
-        private var speedUp:Number = 0.0;
         
         // Food variables
         private var curFood:buttSprite = null;
@@ -96,7 +95,6 @@ package
                 levelTitle.alignment = "center";
                 levelTitle.color = 0xFF0000;
                 levelTitle.render();
-
             }
 
         }
