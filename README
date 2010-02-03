@@ -9,3 +9,17 @@ Instructions on how to get this show going:
 
 3. Execute the build script and run bin/snake
 
+
+
+Serverside instructions:
+
+Flex cannot communicate with remote servers, unless the
+remote server explicitly permits it. Place a "crossdomain.xml" file
+at the server root (http://janiskirsteins.org/crossdomain.xml, for example)
+and add these lines to it:
+
+    <cross-domain-policy>
+      <allow-access-from domain="*" />
+    </cross-domain-policy>
+
+

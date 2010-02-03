@@ -138,7 +138,7 @@ package
                         var faultstring: String = event.fault.faultString;
                         FlxG.log("FAILED: " + faultstring);
                     });
-            transport.send({name: 'dev', score: this.score});
+            transport.send({name: 'kirsis', score: this.score});
             FlxG.log('sent');
         }
 
