@@ -3,6 +3,10 @@ package
 	import org.flixel.*;
     import flash.geom.*;
 
+    // for http requests (- janis)
+    import mx.rpc.http.*;
+    import mx.rpc.events.*;
+
 	public class PlayState extends FlxState
 	{
         // Keeping track of stuff
@@ -115,6 +119,27 @@ package
         private function died():void
         {
             this.dead = true;
+
+            var transport: HTTPService = new HTTPService();
+            transport.url = "http://janiskirsteins.org/snake.php";
+            transport.method = "GET";
+            transport.resultFormat = "text";
+            //this.score };
+
+            transport.addEventListener("result", 
+                    function (event: ResultEvent): void
+                    {
+                        FlxG.log("Result: ");
+                        FlxG.log(event.result);
+                    });
+            transport.addEventListener("fault",
+                    function (event: FaultEvent): void 
+                    {
+                        var faultstring: String = event.fault.faultString;
+                        FlxG.log("FAILED: " + faultstring);
+                    });
+            transport.send({name: 'dev', score: this.score});
+            FlxG.log('sent');
         }
 
         private function loadLevel(num:uint):void
