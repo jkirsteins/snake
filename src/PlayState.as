@@ -2,6 +2,7 @@ package
 {
 	import org.flixel.*;
     import flash.geom.*;
+    import mx.controls.TextInput;
 
     // for http requests (- janis)
     import mx.rpc.http.*;
@@ -17,7 +18,11 @@ package
         private var newLevelState:Boolean = true;
         private var currentLevel:uint = 0;
         private var showExits:Boolean = false;
+        private var isExiting:Boolean = false;
         private var speedUp:Number = 0.0;
+
+        // Key press stack
+        private var keyStack:Array = new Array();
 
         // Level variables 
         public var gameAreaWidth:int = 40;
@@ -53,6 +58,11 @@ package
             this.levelCount = this.levelImage.height / gameAreaHeight - 1;
             // Load our level into an array
             loadLevel(currentLevel);
+
+            var _input:TextInput = new TextInput();
+            _input.editable = true;
+
+            this.addChild(_input);
 		}
 
         public override function update():void
@@ -63,9 +73,16 @@ package
                 curFood.render();
                 t += FlxG.elapsed;
                 if (t > 0.06 - speedUp) {
-                    this.curVector.x = this.tmpVector.x;
-                    this.curVector.y = this.tmpVector.y;
-                    moveSnake();
+                    if (this.isExiting) {
+                        if (!popSnake()) {
+                            clearedLevel();
+                        }
+                    } else {
+                        processKeystroke();
+                        this.curVector.x = this.tmpVector.x;
+                        this.curVector.y = this.tmpVector.y;
+                        moveSnake();
+                    }
                     t = 0.0;
                 }
             }
@@ -105,13 +122,20 @@ package
 
         private function clearedLevel():void
         {
-            if (this.currentLevel < this.levelCount) {
+            if (!this.isExiting) {
+                this.isExiting = true;
+                return;
+            } else if (this.currentLevel < this.levelCount) {
+                // Next level
+                this.isExiting = false;
                 this.t = 0.0;
-                this.speedUp += 0.03 / this.levelCount;
+                this.speedUp += 0.03 / (this.levelCount + 1);
+                trace(this.speedUp);
                 this.currentLevel += 1;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
             } else {
+                // No more levels
                 FlxG.switchState(MenuState);
             }
         }
@@ -249,24 +273,46 @@ package
             }
 
             if (FlxG.keys.justPressed('UP')) {
-                if (curVector.y != 1) {
-                    this.tmpVector.x = 0;
-                    this.tmpVector.y = -1;
-                }
+                keyStack.push('UP');
             } else if (FlxG.keys.justPressed('DOWN')) {
-                if (curVector.y != -1) {
-                    this.tmpVector.x = 0;
-                    this.tmpVector.y = 1;
-                }
+                keyStack.push('DOWN');
             } else if (FlxG.keys.justPressed('LEFT')) {
-                if (this.curVector.x != 1) {
-                    this.tmpVector.x = -1;
-                    this.tmpVector.y = 0;
-                }
+                keyStack.push('LEFT');
             } else if (FlxG.keys.justPressed('RIGHT')) {
-                if (curVector.x != -1) {
-                    this.tmpVector.x = 1;
-                    this.tmpVector.y = 0;
+                keyStack.push('RIGHT');
+            }
+        }
+
+        private function processKeystroke():void
+        {
+            var gotValid:Boolean = false;
+
+            while ((gotValid == false) && (this.keyStack.length > 0)) {
+                var key:String = keyStack.shift();
+                if (key == 'UP') {
+                    if (curVector.y != 1) {
+                        this.tmpVector.x = 0;
+                        this.tmpVector.y = -1;
+                        gotValid = true;
+                    }
+                } else if (key == 'DOWN') {
+                    if (curVector.y != -1) {
+                        this.tmpVector.x = 0;
+                        this.tmpVector.y = 1;
+                        gotValid = true;
+                    }
+                } else if (key == 'LEFT') {
+                    if (this.curVector.x != 1) {
+                        this.tmpVector.x = -1;
+                        this.tmpVector.y = 0;
+                        gotValid = true;
+                    }
+                } else if (key == 'RIGHT') {
+                    if (curVector.x != -1) {
+                        this.tmpVector.x = 1;
+                        this.tmpVector.y = 0;
+                        gotValid = true;
+                    }
                 }
             }
         }
@@ -278,6 +324,18 @@ package
                 return true;
             }
             return false;
+        }
+
+        // Returns false when there is no more snake :P
+        // Should ONLY be used by the exit animation
+        private function popSnake():Boolean
+        {
+            if (this.snake.length > 0) {
+                var tmp:buttSprite = snake.pop();
+                return true;
+            } else {
+                return false;
+            }
         }
 
         private function moveSnake():void
@@ -321,19 +379,20 @@ package
                     died();
                 }
                 return;
-            } else {
-                this.levelCollision[(newY / 8) *
-                        gameAreaWidth + (newX / 8)] = 2;
             }
 
             if (growCycles > 0) {
                 growCycles -= 1;
             } else {
+                // pop snake
                 var tmp:buttSprite = snake.pop();
                 this.levelCollision[(tmp.y / 8) * gameAreaWidth 
                         + (tmp.x / 8)] = 0;
             }
 
+            // Push snake
+            this.levelCollision[(newY / 8) *
+                    gameAreaWidth + (newX / 8)] = 2;
             snake.unshift(new buttSprite(newX, newY));
         }
 
