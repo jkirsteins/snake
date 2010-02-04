@@ -70,21 +70,24 @@ package
             getInput();
 
             if ((!this.newLevelState) && (!this.dead)) {
-                curFood.render();
                 t += FlxG.elapsed;
-                if (t > 0.06 - speedUp) {
-                    if (this.isExiting) {
-                        if (!popSnake()) {
-                            clearedLevel();
+                curFood.render();
+                var step:Number = 0.06 - speedUp;
+                while (t > step) {
+                        if (this.isExiting) {
+                            if (!popSnake()) {
+                                clearedLevel();
+                            }
+                            if (this.speedUp > 0.001) {
+                                this.speedUp += 0.001;
+                            }
+                        } else {
+                            processKeystroke();
+                            this.curVector.x = this.tmpVector.x;
+                            this.curVector.y = this.tmpVector.y;
+                            moveSnake();
                         }
-                        this.speedUp += 0.001
-                    } else {
-                        processKeystroke();
-                        this.curVector.x = this.tmpVector.x;
-                        this.curVector.y = this.tmpVector.y;
-                        moveSnake();
-                    }
-                    t = 0.0;
+                    t -= step;
                 }
             }
  
@@ -131,10 +134,11 @@ package
                 return;
             } else if (this.currentLevel < this.levelCount) {
                 // Next level
+                this.score += 500 * (this.currentLevel + 1);
                 this.isExiting = false;
                 this.speedUp = this.oldSpeedUp;
                 this.t = 0.0;
-                this.speedUp += 0.03 / (this.levelCount + 1);
+                this.speedUp += 0.02 / (this.levelCount + 1);
                 this.currentLevel += 1;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
@@ -382,13 +386,18 @@ package
             }
 
             if (newX == curFood.x && newY == curFood.y) {
-                this.score += 100;
+                this.score += 20 * (this.currentLevel + 1);
                 this.hasEaten += 1;
                 this.growCycles += 3;
                 if (this.hasEaten == this.mustEat) {
                     this.showExits = true;
                 }
                 makeNomNom();
+            }
+            if (this.hasEaten > this.mustEat) {
+                if (this.speedUp < 0.02) {
+                    this.speedUp += 0.0001;
+                }
             }
 
             if (isColliding(newX / 8, newY / 8)) {
