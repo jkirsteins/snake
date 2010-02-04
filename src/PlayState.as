@@ -74,19 +74,20 @@ package
                 curFood.render();
                 var step:Number = 0.06 - speedUp;
                 while (t > step) {
-                        if (this.isExiting) {
-                            if (!popSnake()) {
-                                clearedLevel();
-                            }
-                            if (this.speedUp > 0.001) {
-                                this.speedUp += 0.001;
-                            }
-                        } else {
-                            processKeystroke();
-                            this.curVector.x = this.tmpVector.x;
-                            this.curVector.y = this.tmpVector.y;
-                            moveSnake();
+                    trace(t, step, this.isExiting);
+                    if (this.isExiting) {
+                        if (!popSnake()) {
+                            clearedLevel();
                         }
+                        if (this.speedUp < 0.02) {
+                            this.speedUp += 0.001;
+                        }
+                    } else {
+                        processKeystroke();
+                        this.curVector.x = this.tmpVector.x;
+                        this.curVector.y = this.tmpVector.y;
+                        moveSnake();
+                    }
                     t -= step;
                 }
             }
@@ -130,7 +131,7 @@ package
             if (!this.isExiting) {
                 // Exit animation
                 this.isExiting = true;
-                this.oldSpeedUp = this.speedUp;
+                //this.oldSpeedUp = this.speedUp;
                 return;
             } else if (this.currentLevel < this.levelCount) {
                 // Next level
