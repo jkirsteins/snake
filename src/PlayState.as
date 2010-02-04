@@ -98,7 +98,7 @@ package
                 levelTitle.alignment = "center";
                 levelTitle.color = 0x00FF00;
                 levelTitle.render();
-                text = new String("Press space to begin");
+                text = new String("Press a direction key to begin!");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, text);
                 levelTitle.alignment = "center";
                 levelTitle.color = 0x00FF00;
@@ -111,7 +111,8 @@ package
                 scoreTitle.alignment = "center";
                 scoreTitle.color = 0xFF0000;
                 scoreTitle.render();
-                scoreText = new String("Press space to go back to the menu");
+                scoreText = new String(
+                        "Press esc or space to go back to the menu");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, scoreText);
                 levelTitle.alignment = "center";
                 levelTitle.color = 0xFF0000;
@@ -258,12 +259,14 @@ package
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
 
+            /*
             if (this.newLevelState) {
                 if (FlxG.keys.justPressed('SPACE')) {
                     this.newLevelState = false;
                 }
                 return;
             }
+            */
 
             if (this.dead) {
                 if (FlxG.keys.justPressed('SPACE')) {
@@ -272,15 +275,25 @@ package
                 return;
             }
 
+            var didPush:Boolean = false;
             if (FlxG.keys.justPressed('UP')) {
                 keyStack.push('UP');
+                didPush = true;
             } else if (FlxG.keys.justPressed('DOWN')) {
                 keyStack.push('DOWN');
+                didPush = true;
             } else if (FlxG.keys.justPressed('LEFT')) {
                 keyStack.push('LEFT');
+                didPush = true;
             } else if (FlxG.keys.justPressed('RIGHT')) {
                 keyStack.push('RIGHT');
+                didPush = true;
             }
+            if (this.newLevelState && didPush) {
+                this.newLevelState = false;
+                processKeystroke();
+            }
+
         }
 
         private function processKeystroke():void
