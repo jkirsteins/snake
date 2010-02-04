@@ -20,6 +20,7 @@ package
         private var showExits:Boolean = false;
         private var isExiting:Boolean = false;
         private var speedUp:Number = 0.0;
+        private var oldSpeedUp:Number = 0.0
 
         // Key press stack
         private var keyStack:Array = new Array();
@@ -36,7 +37,6 @@ package
                 gameAreaWidth * gameAreaHeight);
         private var levelImage:buttSprite = null;
         private var levelCount:uint = 0;
-
         
         // Food variables
         private var curFood:buttSprite = null;
@@ -77,6 +77,7 @@ package
                         if (!popSnake()) {
                             clearedLevel();
                         }
+                        this.speedUp += 0.001
                     } else {
                         processKeystroke();
                         this.curVector.x = this.tmpVector.x;
@@ -112,7 +113,7 @@ package
                 scoreTitle.color = 0xFF0000;
                 scoreTitle.render();
                 scoreText = new String(
-                        "Press esc or space to go back to the menu");
+                        "Press esc or enter to go back to the menu");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, scoreText);
                 levelTitle.alignment = "center";
                 levelTitle.color = 0xFF0000;
@@ -124,14 +125,16 @@ package
         private function clearedLevel():void
         {
             if (!this.isExiting) {
+                // Exit animation
                 this.isExiting = true;
+                this.oldSpeedUp = this.speedUp;
                 return;
             } else if (this.currentLevel < this.levelCount) {
                 // Next level
                 this.isExiting = false;
+                this.speedUp = this.oldSpeedUp;
                 this.t = 0.0;
                 this.speedUp += 0.03 / (this.levelCount + 1);
-                trace(this.speedUp);
                 this.currentLevel += 1;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
@@ -141,10 +144,8 @@ package
             }
         }
 
-        private function died():void
+        private function uploadScore():Boolean
         {
-            this.dead = true;
-
             var transport: HTTPService = new HTTPService();
             transport.url = "http://janiskirsteins.org/snake.php";
             transport.method = "GET";
@@ -165,6 +166,12 @@ package
                     });
             transport.send({name: 'kirsis', score: this.score});
             FlxG.log('sent');
+            return true;
+        }
+        private function died():void
+        {
+            this.dead = true;
+            uploadScore();
         }
 
         private function loadLevel(num:uint):void
@@ -269,7 +276,7 @@ package
             */
 
             if (this.dead) {
-                if (FlxG.keys.justPressed('SPACE')) {
+                if (FlxG.keys.justPressed('ENTER')) {
                     FlxG.switchState(MenuState);
                 }
                 return;
