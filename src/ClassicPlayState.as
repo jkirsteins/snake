@@ -251,18 +251,20 @@ package
             }
 
             var didPush:Boolean = false;
-            if (FlxG.keys.justPressed('UP')) {
-                keyStack.push('UP');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('DOWN')) {
-                keyStack.push('DOWN');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('LEFT')) {
-                keyStack.push('LEFT');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('RIGHT')) {
-                keyStack.push('RIGHT');
-                didPush = true;
+            if (keyStack.length < 3) {
+                if (FlxG.keys.justPressed('UP')) {
+                    keyStack.push('UP');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('DOWN')) {
+                    keyStack.push('DOWN');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('LEFT')) {
+                    keyStack.push('LEFT');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('RIGHT')) {
+                    keyStack.push('RIGHT');
+                    didPush = true;
+                }
             }
             if (this.newLevelState && didPush) {
                 this.newLevelState = false;
@@ -341,7 +343,7 @@ package
                 this.score += 20 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
-                this.speedUp += 0.001
+                this.speedUp += 0.002;
                 makeNomNom();
             }
 
