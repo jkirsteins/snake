@@ -17,7 +17,7 @@ package
 
             this._elements = new Array();
 
-            new MenuItem(this, "Play", function (): void { FlxG.switchState(PlayState); });
+            new MenuItem(this, "Play classic mode", function (): void { FlxG.switchState(ClassicPlayState); });
             new MenuItem(this, "Hall of Fame", function (): void { FlxG.log("Hall of Fame"); });
 
             var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.1");

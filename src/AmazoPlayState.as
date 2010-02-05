@@ -8,7 +8,7 @@ package
     import mx.rpc.http.*;
     import mx.rpc.events.*;
 
-	public class PlayState extends FlxState
+	public class AmazoPlayState extends FlxState
 	{
         // Keeping track of stuff
         public var score:uint = 0;
@@ -50,8 +50,15 @@ package
         // Keep track of time
         private var t:Number = 0.0;
 
-		public function PlayState()
+        // Background
+        private var bg:buttSprite = null;
+
+		public function AmazoPlayState()
 		{
+            // Load background
+            this.bg = new buttSprite(160 - 4, 120 - 4);
+            this.bg.scale = new Point(40, 30);
+            this.bg.color = 0x787964;
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
             // Figure out how many levels there are
@@ -68,13 +75,15 @@ package
         public override function update():void
         {
             getInput();
+            
+            // Render the BG
+            this.bg.render();
 
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
                 var step:Number = 0.06 - speedUp;
                 while (t > step) {
-                    trace(t, step, this.isExiting);
                     if (this.isExiting) {
                         if (!popSnake()) {
                             clearedLevel();
@@ -451,8 +460,7 @@ package
             newX = newX * 8;
             newY = newY * 8;
 
-            curFood = new buttSprite(newX, newY);
-            curFood.color = 0xFF0000;
+            curFood = new buttSprite(newX, newY, Images.ClassicFood);
         }
 	}
 }
