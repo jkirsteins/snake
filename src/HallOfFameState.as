@@ -6,6 +6,7 @@ package
 	{
 		public function HallOfFameState()
 		{
+            this.add(new buttInput());
         }
 
         static public function setScore(score: uint):void

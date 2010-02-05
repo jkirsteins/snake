@@ -6,7 +6,7 @@ package
 	{
 		public function Preloader()
 		{
-			className = "snake";
+			className = "SnakeGame";
 			super();
 		}
 	}
