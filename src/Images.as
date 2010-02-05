@@ -8,5 +8,7 @@ package
         static public var LevelImg:Class;
         [Embed(source="/../assets/classicfood.png")]
         static public var ClassicFood:Class;
+        [Embed(source="/../assets/classiclevel.png")]
+        static public var ClassicLevel:Class;
     }
 }

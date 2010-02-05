@@ -17,8 +17,6 @@ package
         private var dead:Boolean = false;
         private var newLevelState:Boolean = true;
         private var currentLevel:uint = 0;
-        private var showExits:Boolean = false;
-        private var isExiting:Boolean = false;
         private var speedUp:Number = 0.0;
         private var oldSpeedUp:Number = 0.0
 
@@ -60,7 +58,7 @@ package
             this.bg.scale = new Point(40, 30);
             this.bg.color = 0x787964;
             // Load our level image
-            this.levelImage = new buttSprite(0, 0, Images.LevelImg);
+            this.levelImage = new buttSprite(0, 0, Images.ClassicLevel);
             // Figure out how many levels there are
             this.levelCount = this.levelImage.height / gameAreaHeight - 1;
             // Load our level into an array
@@ -82,21 +80,12 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.06 - speedUp;
+                var step:Number = 0.1 - speedUp;
                 while (t > step) {
-                    if (this.isExiting) {
-                        if (!popSnake()) {
-                            clearedLevel();
-                        }
-                        if (this.speedUp < 0.02) {
-                            this.speedUp += 0.001;
-                        }
-                    } else {
-                        processKeystroke();
-                        this.curVector.x = this.tmpVector.x;
-                        this.curVector.y = this.tmpVector.y;
-                        moveSnake();
-                    }
+                    processKeystroke();
+                    this.curVector.x = this.tmpVector.x;
+                    this.curVector.y = this.tmpVector.y;
+                    moveSnake();
                     t -= step;
                 }
             }
@@ -135,29 +124,6 @@ package
 
         }
 
-        private function clearedLevel():void
-        {
-            if (!this.isExiting) {
-                // Exit animation
-                this.isExiting = true;
-                //this.oldSpeedUp = this.speedUp;
-                return;
-            } else if (this.currentLevel < this.levelCount) {
-                // Next level
-                this.score += 500 * (this.currentLevel + 1);
-                this.isExiting = false;
-                this.speedUp = this.oldSpeedUp;
-                this.t = 0.0;
-                this.speedUp += 0.02 / (this.levelCount + 1);
-                this.currentLevel += 1;
-                this.newLevelState = true;
-                loadLevel(this.currentLevel);
-            } else {
-                // No more levels
-                FlxG.switchState(MenuState);
-            }
-        }
-
         private function uploadScore():Boolean
         {
             var transport: HTTPService = new HTTPService();
@@ -191,7 +157,6 @@ package
         private function loadLevel(num:uint):void
         {
             this.hasEaten = 0;
-            this.showExits = false;
             // Figure out the original syntax
             var snakeStart:Point = null;
             var snakeEnd:Point = null;
@@ -265,9 +230,7 @@ package
                     var tileVal:int = this.levelCollision[index];
 
                     if (tileVal != 0) {
-                        if ((this.showExits) && (tileVal == 3)) {
-                            this.levelExits[index].render();
-                        } else if (tileVal != 2) {
+                        if (tileVal != 2) {
                             this.levelSprites[index].render();
                         }
                     }
@@ -280,15 +243,6 @@ package
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
 
-            /*
-            if (this.newLevelState) {
-                if (FlxG.keys.justPressed('SPACE')) {
-                    this.newLevelState = false;
-                }
-                return;
-            }
-            */
-
             if (this.dead) {
                 if (FlxG.keys.justPressed('ENTER')) {
                     FlxG.switchState(MenuState);
@@ -297,18 +251,20 @@ package
             }
 
             var didPush:Boolean = false;
-            if (FlxG.keys.justPressed('UP')) {
-                keyStack.push('UP');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('DOWN')) {
-                keyStack.push('DOWN');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('LEFT')) {
-                keyStack.push('LEFT');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('RIGHT')) {
-                keyStack.push('RIGHT');
-                didPush = true;
+            if (keyStack.length < 3) {
+                if (FlxG.keys.justPressed('UP')) {
+                    keyStack.push('UP');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('DOWN')) {
+                    keyStack.push('DOWN');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('LEFT')) {
+                    keyStack.push('LEFT');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('RIGHT')) {
+                    keyStack.push('RIGHT');
+                    didPush = true;
+                }
             }
             if (this.newLevelState && didPush) {
                 this.newLevelState = false;
@@ -360,18 +316,6 @@ package
             return false;
         }
 
-        // Returns false when there is no more snake :P
-        // Should ONLY be used by the exit animation
-        private function popSnake():Boolean
-        {
-            if (this.snake.length > 0) {
-                var tmp:buttSprite = snake.pop();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         private function moveSnake():void
         {
             var newX:int = snake[0].x + curVector.x * 8;
@@ -396,28 +340,15 @@ package
             }
 
             if (newX == curFood.x && newY == curFood.y) {
-                this.score += 20 * (this.currentLevel + 1);
+                this.score += 20 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
-                if (this.hasEaten == this.mustEat) {
-                    this.showExits = true;
-                }
+                this.speedUp += 0.0002;
                 makeNomNom();
-            }
-            if (this.hasEaten > this.mustEat) {
-                if (this.speedUp < 0.02) {
-                    this.speedUp += 0.0001;
-                }
             }
 
             if (isColliding(newX / 8, newY / 8)) {
-                if ((this.levelCollision[(newY / 8) *
-                        gameAreaWidth + (newX / 8)] == 3) && this.showExits) {
-                    clearedLevel();
-                } else {
-                    died();
-                }
-                return;
+                died();
             }
 
             if (growCycles > 0) {
