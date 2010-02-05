@@ -9,7 +9,6 @@ package
                 SimpleGraphic:Class = null)
         {
             super(X, Y, SimpleGraphic);
-            this.color = 0x000000;
         }
 
         public function getPixel(x:int, y:int):uint
