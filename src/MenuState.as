@@ -17,7 +17,12 @@ package
 
             this._elements = new Array();
 
-            new MenuItem(this, "Play classic mode", function (): void 
+
+            new MenuItem(this, "Amazosnake", function (): void 
+                    { 
+                        FlxG.switchState(AmazoPlayState); 
+                    });
+            new MenuItem(this, "Classic snake", function (): void 
                     { 
                         FlxG.switchState(ClassicPlayState); 
                     });
