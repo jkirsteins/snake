@@ -343,7 +343,7 @@ package
                 this.score += 20 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
-                this.speedUp += 0.002;
+                this.speedUp += 0.0002;
                 makeNomNom();
             }
 
