@@ -8,6 +8,12 @@ package
         static public var LevelImg:Class;
         [Embed(source="/../assets/amazofood.png")]
         static public var AmazoFood:Class;
+        [Embed(source="/../assets/amazohead.png")]
+        static public var AmazoHead:Class;
+        [Embed(source="/../assets/amazobody.png")]
+        static public var AmazoBody:Class;
+        [Embed(source="/../assets/amazoturn.png")]
+        static public var AmazoTurn:Class;
         [Embed(source="/../assets/classicfood.png")]
         static public var ClassicFood:Class;
         [Embed(source="/../assets/classiclevel.png")]
