@@ -58,7 +58,7 @@ package
             // Load background
             this.bg = new buttSprite(160 - 4, 120 - 4);
             this.bg.scale = new Point(40, 30);
-            this.bg.color = 0x787964;
+            this.bg.color = 0x000000;
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
             // Figure out how many levels there are
@@ -460,7 +460,8 @@ package
             newX = newX * 8;
             newY = newY * 8;
 
-            curFood = new buttSprite(newX, newY, Images.ClassicFood);
+            curFood = new buttSprite(newX, newY, Images.AmazoFood);
+            curFood.color = 0xFFFFFF;
         }
 	}
 }

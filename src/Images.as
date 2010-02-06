@@ -6,6 +6,8 @@ package
         static public var MenuBG:Class;
         [Embed(source="/../assets/levels.png")]
         static public var LevelImg:Class;
+        [Embed(source="/../assets/amazofood.png")]
+        static public var AmazoFood:Class;
         [Embed(source="/../assets/classicfood.png")]
         static public var ClassicFood:Class;
         [Embed(source="/../assets/classiclevel.png")]

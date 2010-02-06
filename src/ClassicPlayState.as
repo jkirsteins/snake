@@ -167,6 +167,8 @@ package
 
                     var index:int = gY % (gameAreaHeight) * 
                             gameAreaWidth + gX;
+
+                    var tmpSprite:buttSprite = null;
                     
                     // Make sure we fill levelExits with null
                     this.levelExits[index] = null;
@@ -175,22 +177,16 @@ package
                         levelSprites[index] = null;
                     } else if (val == 0x000000) {
                         levelCollision[index] = 1;
-                        levelSprites[index] = new buttSprite(gX * 8,
+                        tmpSprite = new buttSprite(gX * 8,
                                 gY % gameAreaHeight * 8);
+                        tmpSprite.color = 0x000000;
+                        levelSprites[index] = tmpSprite;
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
                         snakeStart = new Point(gX, gY % gameAreaHeight);
                     } else if (val == 0x0000FF) {
                         levelCollision[index] = 0;
                         snakeEnd = new Point(gX, gY % gameAreaHeight);
-                    } else if (val == 0x00FF00) {
-                        var tmpSprite:buttSprite = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
-                        tmpSprite.color = 0x00FF00;
-                        levelCollision[index] = 3;
-                        levelExits[index] = tmpSprite;
-                        levelSprites[index] = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
                     }
                 }
             }
@@ -363,7 +359,9 @@ package
             // Push snake
             this.levelCollision[(newY / 8) *
                     gameAreaWidth + (newX / 8)] = 2;
-            snake.unshift(new buttSprite(newX, newY));
+            var head:buttSprite = new buttSprite(newX, newY)
+            head.color = 0x000000;
+            snake.unshift();
         }
 
         private function renderSnake():void
