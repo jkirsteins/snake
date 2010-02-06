@@ -43,6 +43,8 @@ package
         private var growCycles:int = 0;
         private var curVector:Point = new Point(1, 0);
         private var tmpVector:Point = new Point(1, 0);
+        private var oldUnwrappedHead:Point = null;
+        private var oldUnwrappedTmpPos:Point = null;
 
         // Keep track of time
         private var t:Number = 0.0;
@@ -378,26 +380,52 @@ package
         private function moveSnake():void
         {
             var tmpIndex:int = 0;
+            var tmpPos:Point = null;
             var tmpSprite:buttSprite = null;
             var newX:int = snake[0].x + curVector.x * 8;
             var newY:int = snake[0].y + curVector.y * 8;
             var hasWrapped:Boolean = false;
 
+            // Used to make sure everything is "unwrapped"
+            var unwrappedLastHead:Point = new Point(this.snake[0].x,
+                    this.snake[0].y);
+            var unwrappedTmpPos:Point = new Point(this.snake[1].x,
+                    this.snake[1].y);
+
             if (newX == 320 && doWrap) {
                 newX = 0;
+                unwrappedLastHead.x -= 320;
+                unwrappedTmpPos.x -= 320;
                 hasWrapped = true;
             }
             if (newX == -8 && doWrap && !hasWrapped) {
                 newX = 320 - 8;
+                unwrappedLastHead.x += 320;
+                unwrappedTmpPos.x += 320;
                 hasWrapped = true;
             }
             if (newY == 240 && doWrap && !hasWrapped) {
                 newY = 0;
+                unwrappedLastHead.y -= 240;
+                unwrappedTmpPos.y -= 240;
                 hasWrapped = true;
             }
             if (newY == -8 && doWrap && !hasWrapped) {
                 newY = 240 - 8;
+                unwrappedLastHead.y += 240;
+                unwrappedTmpPos.y += 240;
                 hasWrapped = true;
+            }
+            if (hasWrapped) {
+                if (!oldUnwrappedHead) {
+                    oldUnwrappedHead = unwrappedLastHead;
+                }
+            } else {
+                if (oldUnwrappedHead) {
+                    unwrappedTmpPos.x = oldUnwrappedHead.x;
+                    unwrappedTmpPos.y = oldUnwrappedHead.y;
+                    oldUnwrappedHead = null;
+                }
             }
 
             if (newX == curFood.x && newY == curFood.y) {
@@ -433,9 +461,9 @@ package
                 this.levelCollision[(tmp.y / 8) * gameAreaWidth 
                         + (tmp.x / 8)] = 0;
 
-                // Make the last sprite be a tail sprite, correct direction
-                var lastItem:int = snake.length - 1
-                var tmpPos:Point = new Point(snake[lastItem].x,
+                // Tail
+                var lastItem:int = snake.length - 1;
+                tmpPos = new Point(snake[lastItem].x,
                         snake[lastItem].y);
                 tmpIndex = 8;
                 // left or right
@@ -454,7 +482,73 @@ package
                 snake[lastItem].specificFrame(tmpIndex);
             }
 
-            // Get the head direction and sprite index
+            // Body / Turn
+            tmpPos = unwrappedTmpPos;
+
+            trace(tmpPos, unwrappedLastHead);
+            if (Math.sqrt(Math.pow((Math.abs(tmpPos.x - newX) / 8), 2) + 
+                    Math.pow((Math.abs(tmpPos.y - newY) / 8), 2)) != 2) {
+                tmpIndex = 12;
+                // Turn body part
+                if (unwrappedLastHead.x > tmpPos.x) {
+                    // Right
+                    if (newY < unwrappedLastHead.y) {
+                        // up
+                        tmpIndex += 0;
+                    } else if (newY > unwrappedLastHead.y) {
+                        // down
+                        tmpIndex += 1;
+                    }
+                } else if (unwrappedLastHead.x < tmpPos.x) {
+                    // Left
+                    if (newY < unwrappedLastHead.y) {
+                        // up
+                        tmpIndex += 5;
+                    } else if (newY > unwrappedLastHead.y) {
+                        // down
+                        tmpIndex += 4;
+                    }
+                } else {
+                    if (unwrappedLastHead.y < tmpPos.y) {
+                        // up
+                        if (newX > unwrappedLastHead.x) {
+                            // right
+                            tmpIndex += 2;
+                        } else if (newX < unwrappedLastHead.x) {
+                            // left
+                            tmpIndex += 3
+                        }
+                    } else {
+                        // Down
+                        if (newX > unwrappedLastHead.x) {
+                            // right
+                            tmpIndex += 7;
+                        } else if (newX < unwrappedLastHead.x) {
+                            // left
+                            tmpIndex += 6;
+                        }
+                    }
+                }
+            } else {
+                // Straight body part
+                // Right/left
+                tmpIndex = 4;
+                if (unwrappedLastHead.x > tmpPos.x) {
+                    tmpIndex += 0;
+                } else if (unwrappedLastHead.x < tmpPos.x) {
+                    tmpIndex += 1;
+                } else {
+                    // Top/bottom
+                    if (unwrappedLastHead.y > tmpPos.y) {
+                        tmpIndex += 3;
+                    } else {
+                        tmpIndex += 2;
+                    }
+                }
+            }
+            snake[0].specificFrame(tmpIndex);
+
+            // Head
             tmpIndex = 0;
             // left/right
             if (this.curVector.x == 1) {
