@@ -33,7 +33,7 @@ package
                         FlxG.switchState(HallOfFameState);
                     });
 
-            var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.1");
+            var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.8");
             title.alignment = "left";
             this.add(title);
 		}
