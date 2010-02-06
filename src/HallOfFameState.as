@@ -4,7 +4,33 @@ package
 
 	public class HallOfFameState extends FlxState
 	{
-        static protected var _scores: Array = new Array();
+        static protected var _scores: Object = 
+        { 
+            1: { 
+                '1': { 'name': 'ddev', 'score': 100 },
+                '2': { 'name': 'ddev', 'score': 100 },
+                '3': { 'name': 'ddev', 'score': 100 },
+                '4': { 'name': 'ddev', 'score': 100 },
+                '5': { 'name': 'ddev', 'score': 100 },
+                '6': { 'name': 'ddev', 'score': 100 },
+                '7': { 'name': 'ddev', 'score': 100 },
+                '8': { 'name': 'ddev', 'score': 100 },
+                '9': { 'name': 'ddev', 'score': 100 },
+                '10': { 'name': 'ddev', 'score': 100 }
+               }, 
+            2: { 
+                '1': { 'name': 'ddev', 'score': 100 },
+                '2': { 'name': 'ddev', 'score': 100 },
+                '3': { 'name': 'ddev', 'score': 100 },
+                '4': { 'name': 'ddev', 'score': 100 },
+                '5': { 'name': 'ddev', 'score': 100 },
+                '6': { 'name': 'ddev', 'score': 100 },
+                '7': { 'name': 'ddev', 'score': 100 },
+                '8': { 'name': 'ddev', 'score': 100 },
+                '9': { 'name': 'ddev', 'score': 100 },
+                '10': { 'name': 'ddev', 'score': 100 }
+               } 
+        };
 
         static public function onScoreLoad(type: uint, arr: Object): void
         {
@@ -22,6 +48,8 @@ package
         {
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
+            else if (FlxG.keys.justPressed("Y"))
+                SnakeGame.getInstance().showDialog(new buttInputDialog());
         }
 
         public function addScoreList(title_string: String, type: uint): void
