@@ -377,6 +377,8 @@ package
 
         private function moveSnake():void
         {
+            var tmpIndex:int = 0;
+            var tmpSprite:buttSprite = null;
             var newX:int = snake[0].x + curVector.x * 8;
             var newY:int = snake[0].y + curVector.y * 8;
             var hasWrapped:Boolean = false;
@@ -430,12 +432,52 @@ package
                 var tmp:buttSprite = snake.pop();
                 this.levelCollision[(tmp.y / 8) * gameAreaWidth 
                         + (tmp.x / 8)] = 0;
+
+                // Make the last sprite be a tail sprite, correct direction
+                var lastItem:int = snake.length - 1
+                var tmpPos:Point = new Point(snake[lastItem].x,
+                        snake[lastItem].y);
+                tmpIndex = 8;
+                // left or right
+                if (snake[lastItem - 1].x < tmpPos.x) {
+                    tmpIndex += 1;
+                } else if (snake[lastItem - 1].x > tmpPos.x) {
+                    tmpIndex += 0;
+                } else {
+                    // Up or down
+                    if (snake[lastItem - 1].y < tmpPos.y) {
+                        tmpIndex += 2;
+                    } else {
+                        tmpIndex += 3;
+                    }
+                }
+                snake[lastItem].specificFrame(tmpIndex);
+            }
+
+            // Get the head direction and sprite index
+            tmpIndex = 0;
+            // left/right
+            if (this.curVector.x == 1) {
+                tmpIndex += 0;
+            } else if (this.curVector.x == -1) {
+                tmpIndex += 1;
+            } else {
+                // up/down
+                if (this.curVector.y == -1) {
+                    tmpIndex += 2;
+                } else {
+                    tmpIndex += 3;
+                }
             }
 
             // Push snake
             this.levelCollision[(newY / 8) *
                     gameAreaWidth + (newX / 8)] = 2;
-            snake.unshift(new buttSprite(newX, newY));
+            tmpSprite = new buttSprite(newX, newY);
+            tmpSprite.loadGraphic(Images.AmazoSnake, true, false,
+                        8, 8, false);
+            tmpSprite.specificFrame(tmpIndex);
+            snake.unshift(tmpSprite);
         }
 
         private function renderSnake():void
