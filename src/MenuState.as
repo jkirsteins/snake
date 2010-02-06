@@ -13,6 +13,8 @@ package
 
 		public function MenuState()
 		{
+            FlxG.showCursor(null);
+
             this.add(new FlxSprite(0, 0, Images.MenuBG));
 
             this._elements = new Array();
