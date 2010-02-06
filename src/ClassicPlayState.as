@@ -132,6 +132,7 @@ package
             // Figure out the original syntax
             var snakeStart:Point = null;
             var snakeEnd:Point = null;
+            var tmpSprite:buttSprite = null;
             for (var gY:uint = gameAreaHeight * num; gY < gameAreaHeight * 
                     (num + 1); gY++) {
                 for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
@@ -140,8 +141,6 @@ package
                     var index:int = gY % (gameAreaHeight) * 
                             gameAreaWidth + gX;
 
-                    var tmpSprite:buttSprite = null;
-                    
                     // Make sure we fill levelExits with null
                     this.levelExits[index] = null;
                     if (val == 0xFFFFFF) {
@@ -183,7 +182,9 @@ package
             for (var j:Number = 0; j < length + 1; j++) {
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
-                snake.push(new buttSprite(curPos.x * 8, curPos.y * 8));
+                tmpSprite = new buttSprite(curPos.x * 8, curPos.y * 8)
+                tmpSprite.color = 0x000000;
+                snake.push(tmpSprite);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
 
@@ -333,7 +334,7 @@ package
                     gameAreaWidth + (newX / 8)] = 2;
             var head:buttSprite = new buttSprite(newX, newY)
             head.color = 0x000000;
-            snake.unshift();
+            snake.unshift(head);
         }
 
         private function renderSnake():void
