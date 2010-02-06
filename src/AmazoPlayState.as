@@ -377,6 +377,8 @@ package
 
         private function moveSnake():void
         {
+            var tmpIndex:int = 0;
+            var tmpSprite:buttSprite = null;
             var newX:int = snake[0].x + curVector.x * 8;
             var newY:int = snake[0].y + curVector.y * 8;
             var hasWrapped:Boolean = false;
@@ -430,12 +432,34 @@ package
                 var tmp:buttSprite = snake.pop();
                 this.levelCollision[(tmp.y / 8) * gameAreaWidth 
                         + (tmp.x / 8)] = 0;
+
+                // Make the last sprite be a tail sprite, correct direction
+                var tmpPos:Point = new Point(snake[0].x, snake[0].y);
+                tmpIndex = 8;
+                if (snake[1].x > tmpPos.x) {
+                    // Right
+                    tmpIndex += 1;
+                } else if (snake[1].x < tmpPos.x) {
+                    // Left
+                    tmpIndex += 0;
+                } else {
+                    // Up or down
+                    if (snake[1].y > tmpPos.y) {
+                        tmpIndex += 2;
+                    } else {
+                        tmpIndex += 3;
+                    }
+                }
+                snake[0].specificFrame(tmpIndex);
             }
 
             // Push snake
             this.levelCollision[(newY / 8) *
                     gameAreaWidth + (newX / 8)] = 2;
-            snake.unshift(new buttSprite(newX, newY));
+            tmpSprite = new buttSprite(newX, newY);
+            tmpSprite.loadGraphic(Images.AmazoSnake, true, false,
+                        8, 8, false);
+            snake.unshift(tmpSprite);
         }
 
         private function renderSnake():void

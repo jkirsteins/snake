@@ -150,7 +150,7 @@ package
                         levelCollision[index] = 1;
                         tmpSprite = new buttSprite(gX * 8,
                                 gY % gameAreaHeight * 8);
-                        tmpSprite.color = 0x000000;
+                        tmpSprite.color = 0x32332C;
                         levelSprites[index] = tmpSprite;
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
@@ -183,7 +183,7 @@ package
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
                 tmpSprite = new buttSprite(curPos.x * 8, curPos.y * 8)
-                tmpSprite.color = 0x000000;
+                tmpSprite.color = 0x32332C;
                 snake.push(tmpSprite);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
@@ -333,7 +333,7 @@ package
             this.levelCollision[(newY / 8) *
                     gameAreaWidth + (newX / 8)] = 2;
             var head:buttSprite = new buttSprite(newX, newY)
-            head.color = 0x000000;
+            head.color = 0x32332C;
             snake.unshift(head);
         }
 
