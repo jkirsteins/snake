@@ -6,29 +6,36 @@ package
 
 	public class buttInput extends FlxCore
 	{
-        protected var text: FlxText;
+        protected var text: buttText;
         protected var shift_pressed: Boolean = false;
 
         protected var max_length: uint = 8;
 
-		public function buttInput()
+        public function get content(): String { return this.text.text; }
+
+		public function buttInput(X: uint, Y: uint, W: uint, AL: String)
 		{
 			super();
 
 		    SnakeGame.getInstance().stage.addEventListener(KeyboardEvent.KEY_DOWN, this.onKeyDown);
 			SnakeGame.getInstance().stage.addEventListener(KeyboardEvent.KEY_UP, this.onKeyUp);
 
-            this.text = new FlxText(0, 0, FlxG.width, "");
+            this.text = new buttText(X, Y, W, "");
+            this.text.alignment = AL;
 		}
 
 		protected function onKeyUp(event:KeyboardEvent):void
         {
+            if (FlxG.pause) return;
+            
             if (event.keyCode == 16)
                 this.shift_pressed = false;
         }
 
 		protected function onKeyDown(event:KeyboardEvent):void
 		{
+            if (event.keyCode == 80 && !SnakeGame.getInstance().in_dialog) return;
+
             if (event.keyCode == 13) return;
 
             if (event.keyCode == 8)

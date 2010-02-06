@@ -17,6 +17,19 @@ package
             return "http://janiskirsteins.org/snake.php"; 
         }
 
+        static public function check(type: uint, score: uint): Boolean
+        {
+            for (var i: uint = 1; i <= 10; i++)
+            {
+                var prev: Object = HallOfFameState.scores[type][String(i)];
+                if (prev["score"] < score)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static function fetch_scores(type: uint, callback: Function): void
         {
             var transport: HTTPService = new HTTPService();
@@ -62,12 +75,45 @@ package
                         var faultstring: String = event.fault.faultString;
                         FlxG.log("Could not submit: " + faultstring);
                     });
+
             transport.send({
                 name: name, 
                 score: score,
                 action: Score.ACTION_SUBMIT,
                 game_type: type });
             FlxG.log('High score information sent');
+
+
+
+            var scores: Object = HallOfFameState.scores;
+
+            for (var i: uint = 1; i <= 10; i++)
+            {
+                var prev: Object = scores[type][String(i)];
+                if (prev["score"] < score)
+                {
+                    for (var j: uint = 10; j > i; j--)
+                    {
+                        scores[type][String(j)] = scores[type][String(j-1)];
+                    }
+
+                    if (name.length < 8)
+                    {
+                        for (var z: uint = 0; z < 8 - name.length; z++)
+                            name = " " + name;
+                    }
+
+                    scores[type][String(i)] = 
+                    {
+                        'name': name,
+                        'score': score,
+                        'created_at': 'None'
+                    }
+                    HallOfFameState.onScoreLoad(type, scores[type]);
+                    FlxG.log("Local high score list updated - breaking");
+                    return;
+                }
+            }
         }
 	}
 }

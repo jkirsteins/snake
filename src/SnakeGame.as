@@ -1,6 +1,7 @@
 package
 {
 	import org.flixel.*;
+	import org.flixel.data.FlxPause;
     import flash.display.*;
     import flash.events.*;
 
@@ -18,6 +19,19 @@ package
             FlxG.log("created");
             Score.fetch_scores(Score.TYPE_CLASSIC, HallOfFameState.onScoreLoad);
             Score.fetch_scores(Score.TYPE_AMAZO, HallOfFameState.onScoreLoad);
+        }
+
+        public function showDialog(dialog: FlxLayer): void
+        {
+            this.pause = dialog;
+            this.useDefaultHotKeys = false;
+            FlxG.pause = true;
+        }
+
+        public function closeDialog(): void
+        {
+            this.useDefaultHotKeys = true;
+            FlxG.pause = false;
         }
 
 		public function SnakeGame()

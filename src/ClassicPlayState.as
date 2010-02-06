@@ -6,6 +6,9 @@ package
 
 	public class ClassicPlayState extends FlxState
 	{
+        static public function get BLACK(): uint { return 0xFF32332C; }
+        static public function get WHITE(): uint { return 0xFF787964; }
+
         // Keeping track of stuff
         public var score:uint = 0;
         private var hasEaten:uint = 0;
@@ -123,7 +126,16 @@ package
         private function died():void
         {
             this.dead = true;
-            Score.submit_score('dev', this.score, Score.TYPE_CLASSIC);
+            
+            if (Score.check(Score.TYPE_CLASSIC, this.score))
+            {
+                SnakeGame.getInstance().showDialog(
+                        new buttClassicInputDialog(Score.TYPE_CLASSIC, this.score));
+            }
+            else
+            {
+                SnakeGame.getInstance().showDialog(new buttClassicEndDialog());
+            }
         }
 
         private function loadLevel(num:uint):void

@@ -52,6 +52,9 @@ package org.flixel
 		 * Defaults to <code>data.FlxPause</code>.
 		 */
 		public var pause:FlxLayer;
+		public var old_pause:FlxLayer;
+
+        public var in_dialog: Boolean = false;
 		
 		//startup
 		internal var _iState:Class;
@@ -261,7 +264,13 @@ package org.flixel
 			    		showSoundTray();
 						return;
 					case 80:
-						FlxG.pause = !FlxG.pause;
+                    {
+                        if (!this.in_dialog)
+                        {
+						    FlxG.pause = !FlxG.pause;
+                        }
+                        return;
+                    }
 					default: break;
 				}
 			}
@@ -326,6 +335,14 @@ package org.flixel
 		 */
 		internal function pauseGame():void
 		{
+            //FlxG.log(this.in_dialog);
+            //if (!this.in_dialog)
+            //{
+            //    this.pause = new FlxPause(); //this.old_pause;
+            //}
+            //FlxG.log(this.pause.x);
+            //FlxG.log(this.pause.y);
+
 			if((x != 0) || (y != 0))
 			{
 				x = 0;

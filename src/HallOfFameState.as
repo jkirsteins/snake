@@ -4,31 +4,33 @@ package
 
 	public class HallOfFameState extends FlxState
 	{
+        static public function get scores(): Object { return HallOfFameState._scores; }
+
         static protected var _scores: Object = 
         { 
             1: { 
-                '1': { 'name': 'ddev', 'score': 100 },
-                '2': { 'name': 'ddev', 'score': 100 },
-                '3': { 'name': 'ddev', 'score': 100 },
-                '4': { 'name': 'ddev', 'score': 100 },
-                '5': { 'name': 'ddev', 'score': 100 },
-                '6': { 'name': 'ddev', 'score': 100 },
-                '7': { 'name': 'ddev', 'score': 100 },
-                '8': { 'name': 'ddev', 'score': 100 },
-                '9': { 'name': 'ddev', 'score': 100 },
-                '10': { 'name': 'ddev', 'score': 100 }
+                '1': { 'name': '    None', 'score': 0 },
+                '2': { 'name': '    None', 'score': 0 },
+                '3': { 'name': '    None', 'score': 0 },
+                '4': { 'name': '    None', 'score': 0 },
+                '5': { 'name': '    None', 'score': 0 },
+                '6': { 'name': '    None', 'score': 0 },
+                '7': { 'name': '    None', 'score': 0 },
+                '8': { 'name': '    None', 'score': 0 },
+                '9': { 'name': '    None', 'score': 0 },
+                '10': { 'name': '    None', 'score': 0 }
                }, 
             2: { 
-                '1': { 'name': 'ddev', 'score': 100 },
-                '2': { 'name': 'ddev', 'score': 100 },
-                '3': { 'name': 'ddev', 'score': 100 },
-                '4': { 'name': 'ddev', 'score': 100 },
-                '5': { 'name': 'ddev', 'score': 100 },
-                '6': { 'name': 'ddev', 'score': 100 },
-                '7': { 'name': 'ddev', 'score': 100 },
-                '8': { 'name': 'ddev', 'score': 100 },
-                '9': { 'name': 'ddev', 'score': 100 },
-                '10': { 'name': 'ddev', 'score': 100 }
+                '1': { 'name': '    None', 'score': 0 },
+                '2': { 'name': '    None', 'score': 0 },
+                '3': { 'name': '    None', 'score': 0 },
+                '4': { 'name': '    None', 'score': 0 },
+                '5': { 'name': '    None', 'score': 0 },
+                '6': { 'name': '    None', 'score': 0 },
+                '7': { 'name': '    None', 'score': 0 },
+                '8': { 'name': '    None', 'score': 0 },
+                '9': { 'name': '    None', 'score': 0 },
+                '10': { 'name': '    None', 'score': 0 }
                } 
         };
 
@@ -41,6 +43,7 @@ package
             for (var i: uint = 1; i <= 10; i++)
             {
                 HallOfFameState._scores[type][String(i)] = arr[String(i)];
+                FlxG.log("Received name: " + arr[String(i)]["name"]);
             }
         }
 
@@ -48,8 +51,6 @@ package
         {
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
-            else if (FlxG.keys.justPressed("Y"))
-                SnakeGame.getInstance().showDialog(new buttInputDialog());
         }
 
         public function addScoreList(title_string: String, type: uint): void
@@ -75,7 +76,6 @@ package
 		public function HallOfFameState()
 		{
             this.add(new FlxSprite(0, 0, Images.HofBG));
-            this.add(new buttInput());
 
             this.addScoreList("Amazosnake Highscores", Score.TYPE_AMAZO);
             this.addScoreList("Classic Highscores", Score.TYPE_CLASSIC);

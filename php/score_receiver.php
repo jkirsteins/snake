@@ -31,12 +31,22 @@ if (!$result)
 
 
 $positions = array();
+// fill positions with default values, in case the database does not contain
+// enough entries
+for ($i = 1; $i <= 10; $i++)
+{
+    $positions[$i] = array(
+                'name' => '    None',
+                'score' => 0,
+                'created_at' => null
+            );
+}
 
 $pos = 1;
 while ($row = mysql_fetch_assoc($result))
 {
     $positions[$pos++] = array(
-                'name' => $row['name'],
+                'name' => sprintf("%-8s", $row['name']),
                 'score' => $row['score'],
                 'created_at' => $row['created_at']
             );
