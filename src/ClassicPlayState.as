@@ -93,17 +93,10 @@ package
             renderSnake();
            
             if (this.newLevelState) {
-                var text:String = new String("Level ")
-                text = text.concat(currentLevel + 1);
-                var levelTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, 
-                        text);
+                var text:String = new String("Press a direction key to begin!");
+                var levelTitle:FlxText = new FlxText(0, 70, 320, text);
                 levelTitle.alignment = "center";
-                levelTitle.color = 0x00FF00;
-                levelTitle.render();
-                text = new String("Press a direction key to begin!");
-                levelTitle = new FlxText(0, 240*0.5 + 5, 320, text);
-                levelTitle.alignment = "center";
-                levelTitle.color = 0x00FF00;
+                levelTitle.color = 0x32332C;
                 levelTitle.render();
             } else if (this.dead) {
                 var scoreText:String = new String("Score: ");
