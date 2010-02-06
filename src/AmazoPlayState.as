@@ -4,9 +4,6 @@ package
     import flash.geom.*;
     import mx.controls.TextInput;
 
-    // for http requests (- janis)
-    import mx.rpc.http.*;
-    import mx.rpc.events.*;
 
 	public class AmazoPlayState extends FlxState
 	{
@@ -158,34 +155,10 @@ package
             }
         }
 
-        private function uploadScore():Boolean
-        {
-            var transport: HTTPService = new HTTPService();
-            transport.url = "http://janiskirsteins.org/snake.php";
-            transport.method = "GET";
-            transport.resultFormat = "text";
-            //this.score };
-
-            transport.addEventListener("result", 
-                    function (event: ResultEvent): void
-                    {
-                        FlxG.log("Result: ");
-                        FlxG.log(event.result);
-                    });
-            transport.addEventListener("fault",
-                    function (event: FaultEvent): void 
-                    {
-                        var faultstring: String = event.fault.faultString;
-                        FlxG.log("FAILED: " + faultstring);
-                    });
-            transport.send({name: 'kirsis', score: this.score});
-            FlxG.log('sent');
-            return true;
-        }
         private function died():void
         {
             this.dead = true;
-            uploadScore();
+            Score.submit_score('dev', this.score, Score.TYPE_AMAZO);
         }
 
         private function loadLevel(num:uint):void
