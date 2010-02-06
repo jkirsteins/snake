@@ -24,20 +24,20 @@ package
                 FlxG.switchState(MenuState);
         }
 
-        public function addScoreList(type: uint): void
+        public function addScoreList(title_string: String, type: uint): void
         {
             for (var i: uint = 1; i <= 10; i++)
             {
-                var title: FlxText = new FlxText(0, 80, FlxG.width, "Classic Highscores");
+                var title: FlxText = new FlxText((FlxG.width/2) * (type-1), 80, FlxG.width/2, title_string);
                 title.alignment="center";
                 this.add(title);
 
-                var name: FlxText = new FlxText(0, 100 + i*10, FlxG.width/2, String(i) + ") " + 
+                var name: FlxText = new FlxText(0 + FlxG.width/2 * (type-1), 100 + i*10, FlxG.width/4, String(i) + ") " + 
                         HallOfFameState._scores[type][String(i)]["name"]);
                 name.alignment = "right";
                 this.add(name);
 
-                var score: FlxText = new FlxText(FlxG.width/2, 100 + i*10, FlxG.width/2, 
+                var score: FlxText = new FlxText(FlxG.width/4 + FlxG.width/2 * (type - 1), 100 + i*10, FlxG.width/4, 
                         HallOfFameState._scores[type][String(i)]["score"]);
                 score.alignment = "left";
                 this.add(score);
@@ -49,7 +49,8 @@ package
             this.add(new FlxSprite(0, 0, Images.HofBG));
             this.add(new buttInput());
 
-            this.addScoreList(Score.TYPE_CLASSIC);
+            this.addScoreList("Amazosnake Highscores", Score.TYPE_AMAZO);
+            this.addScoreList("Classic Highscores", Score.TYPE_CLASSIC);
             //Score.fetch_scores(Score.TYPE_CLASSIC, this.populateClassicScores);
             //Score.fetch_scores(Score.TYPE_CLASSIC, this.populateClassicScores);
         }
