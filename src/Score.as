@@ -28,9 +28,7 @@ package
             transport.addEventListener("result", 
                     function (event: ResultEvent): void
                     {
-                        FlxG.log("Fetch result: ");
-                        FlxG.log(event.result);
-                        callback(JSON.decode(String(event.result)));
+                        callback(type, JSON.decode(String(event.result)));
                     });
             transport.addEventListener("fault",
                     function (event: FaultEvent): void 

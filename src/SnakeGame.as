@@ -13,6 +13,13 @@ package
 
         public static function getInstance(): SnakeGame { return SnakeGame._inst; }
 
+        override public function onCreated(): void
+        {
+            FlxG.log("created");
+            Score.fetch_scores(Score.TYPE_CLASSIC, HallOfFameState.onScoreLoad);
+            Score.fetch_scores(Score.TYPE_AMAZO, HallOfFameState.onScoreLoad);
+        }
+
 		public function SnakeGame()
 		{
 			super(320,240,MenuState,2);

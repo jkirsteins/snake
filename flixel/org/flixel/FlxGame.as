@@ -578,7 +578,13 @@ package org.flixel
 				//All set!
 				_created = true;
 				_logoTimer = 0;
+
+                this.onCreated();
 			}
 		}
+
+        public function onCreated(): void
+        {
+        }
 	}
 }
