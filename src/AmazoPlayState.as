@@ -223,7 +223,37 @@ package
             for (var j:Number = 0; j < length + 1; j++) {
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
-                snake.push(new buttSprite(curPos.x * 8, curPos.y * 8));
+                
+                var frameIndex:int = 0;
+                var snakeSkin:buttSprite = new buttSprite(curPos.x * 8, 
+                        curPos.y * 8)
+                snakeSkin.loadGraphic(Images.AmazoSnake, true, false,
+                        8, 8, false);
+
+                // Figure out which frame to use
+                if (j == length) {
+                    // Tail
+                    frameIndex = 8;
+                } else if (j == 0) {
+                    // Head
+                    frameIndex = 0;
+                } else {
+                    // Body
+                    frameIndex = 4;
+                }
+
+                if ((curVector.x == 1) && (curVector.y == 0)) {
+                    frameIndex += 0;
+                } else if ((curVector.x == -1) && (curVector.y == 0)) {
+                    frameIndex += 1;
+                } else if ((curVector.x == 0) && (curVector.y == 1)) {
+                    frameIndex += 3;
+                } else if ((curVector.x == 0) && (curVector.y == -1)) {
+                    frameIndex += 4;
+                }
+                
+                snakeSkin.specificFrame(frameIndex);
+                snake.push(snakeSkin);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
 
