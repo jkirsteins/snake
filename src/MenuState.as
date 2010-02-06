@@ -5,7 +5,7 @@ package
 
 	public class MenuState extends FlxState
 	{
-        private var _index: int = 0;
+        static private var _index: int = 0;
         private var _elements: Array;
 
         private var normalColor: uint = 0x000000;
@@ -36,11 +36,12 @@ package
             var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.8");
             title.alignment = "left";
             this.add(title);
+
 		}
 
         public function getIndex(): int
         {
-            return this._index;
+            return MenuState._index;
         }
 
         public function addItem(item: MenuItem): void
@@ -56,7 +57,7 @@ package
 
             item.setIndex(_elements.length);
 
-            if (_elements.length == this._index)
+            if (_elements.length == MenuState._index)
                 item.color = item.hoverColor;
             else
                 item.color = item.normalColor;
@@ -67,27 +68,27 @@ package
 
 		override public function update():void
 		{
-            var _oldIndex: int = this._index;
+            var _oldIndex: int = MenuState._index;
 
 			super.update();
             if (FlxG.keys.justPressed('UP'))
-                this._index = (this._index == 0 ? 
+                MenuState._index = (MenuState._index == 0 ? 
                                    this._elements.length-1 : 
-                                   this._index - 1);
+                                   MenuState._index - 1);
 
             else if (FlxG.keys.justPressed('DOWN'))
-                this._index = (this._index == this._elements.length-1 ? 
+                MenuState._index = (MenuState._index == this._elements.length-1 ? 
                                    0 : 
-                                   this._index + 1);
+                                   MenuState._index + 1);
             else if (FlxG.keys.justPressed('ENTER'))
-                this._elements[this._index].trigger();
+                this._elements[MenuState._index].trigger();
 
             if (FlxG.keys.justPressed('UP') || FlxG.keys.justPressed('DOWN'))
             {
                 this._elements[_oldIndex].color = this._elements[_oldIndex].normalColor;
 
-                //this._elements[this._index].color = 0x00FF00;
-                Tweener.addTween(this._elements[this._index], {intensity:1.0, time: 1, transition: "easeOutSine"});
+                //this._elements[MenuState._index].color = 0x00FF00;
+                Tweener.addTween(this._elements[MenuState._index], {intensity:1.0, time: 1, transition: "easeOutSine"});
                 Tweener.addTween(this._elements[_oldIndex], {intensity:0.0, time: 0, transition: "easeOutSine"});
                 
             }
