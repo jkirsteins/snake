@@ -178,7 +178,16 @@ package
         private function died():void
         {
             this.dead = true;
-            Score.submit_score('dev', this.score, Score.TYPE_AMAZO);
+
+            if (Score.check(Score.TYPE_AMAZO, this.score))
+            {
+                SnakeGame.getInstance().showDialog(
+                        new buttAmazoInputDialog(Score.TYPE_AMAZO, this.score));
+            }
+            else
+            {
+                SnakeGame.getInstance().showDialog(new buttAmazoEndDialog());
+            }
         }
 
         private function loadLevel(num:uint):void
@@ -314,8 +323,8 @@ package
 
             if (FlxG.keys.justPressed("F1"))
             {
-                this.currentLevel = -1;
                 this.clearedLevel()
+                this.currentLevel = 0;
                 loadLevel(this.currentLevel);
             } else if (FlxG.keys.justPressed("F2"))
             {
