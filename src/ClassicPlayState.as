@@ -316,7 +316,10 @@ package
                 this.score += 21 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
-                this.speedUp += 0.0002;
+                if (this.speedUp < 0.07) {
+                    trace(this.speedUp);
+                    this.speedUp += 0.002;
+                }
                 makeNomNom();
             }
 
