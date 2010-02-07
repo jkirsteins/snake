@@ -224,7 +224,7 @@ package
             }
 
             var didPush:Boolean = false;
-            if (keyStack.length < 3) {
+            if (keyStack.length < 5) {
                 if (FlxG.keys.justPressed('UP')) {
                     keyStack.push('UP');
                     didPush = true;
@@ -313,7 +313,7 @@ package
             }
 
             if (newX == curFood.x && newY == curFood.y) {
-                this.score += 20 + (5 * this.hasEaten);
+                this.score += 21 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
                 this.speedUp += 0.0002;

@@ -44,6 +44,10 @@ package
         private var curVector:Point = new Point(1, 0);
         private var tmpVector:Point = new Point(1, 0);
         private var unwrappedSnake:Array = null;
+        
+        // Score text
+        private var scoreText:FlxText = null;
+        private var scoreTextShadow:FlxText = null;
 
         // Keep track of time
         private var t:Number = 0.0;
@@ -62,6 +66,17 @@ package
             this.levelCount = this.levelImage.height / gameAreaHeight - 1;
             // Load our level into an array
             loadLevel(currentLevel);
+
+            // Score text
+            this.scoreText = new FlxText(0, 0, 320, "0");
+            this.scoreText.color = 0xFFFFFF;
+            this.scoreText.alpha = 0.5;
+            this.scoreText.alignment = "right";
+            this.scoreTextShadow = new FlxText(1, 1, 320, "0");
+            this.scoreTextShadow.color = 0x000000;
+            this.scoreTextShadow.alpha = 0.5;
+            this.scoreTextShadow.alignment = "right";
+
 
             var _input:TextInput = new TextInput();
             _input.editable = true;
@@ -100,6 +115,9 @@ package
  
             renderLevel();
             renderSnake();
+
+            this.scoreTextShadow.render();
+            this.scoreText.render();
            
             if (this.newLevelState) {
                 var text:String = new String("Level ")
@@ -129,7 +147,7 @@ package
                 levelTitle.color = 0xFF0000;
                 levelTitle.render();
             }
-
+            
         }
 
         private function clearedLevel():void
@@ -142,6 +160,8 @@ package
             } else if (this.currentLevel < this.levelCount) {
                 // Next level
                 this.score += 500 * (this.currentLevel + 1);
+                this.scoreText.text = this.score.toString();
+                this.scoreTextShadow.text = this.score.toString();
                 this.isExiting = false;
                 this.speedUp = this.oldSpeedUp;
                 this.t = 0.0;
@@ -163,6 +183,7 @@ package
 
         private function loadLevel(num:uint):void
         {
+            this.keyStack = new Array();
             this.hasEaten = 0;
             this.showExits = false;
             // Figure out the original syntax
@@ -308,18 +329,20 @@ package
             }
 
             var didPush:Boolean = false;
-            if (FlxG.keys.justPressed('UP')) {
-                keyStack.push('UP');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('DOWN')) {
-                keyStack.push('DOWN');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('LEFT')) {
-                keyStack.push('LEFT');
-                didPush = true;
-            } else if (FlxG.keys.justPressed('RIGHT')) {
-                keyStack.push('RIGHT');
-                didPush = true;
+            if (this.keyStack.length < 5) {
+                if (FlxG.keys.justPressed('UP')) {
+                    keyStack.push('UP');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('DOWN')) {
+                    keyStack.push('DOWN');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('LEFT')) {
+                    keyStack.push('LEFT');
+                    didPush = true;
+                } else if (FlxG.keys.justPressed('RIGHT')) {
+                    keyStack.push('RIGHT');
+                    didPush = true;
+                }
             }
             if (this.newLevelState && didPush) {
                 this.newLevelState = false;
@@ -438,9 +461,12 @@ package
             }
 
             if (newX == curFood.x && newY == curFood.y) {
-                this.score += 20 * (this.currentLevel + 1);
+                this.score += 20 * (this.currentLevel + 1) + 
+                        this.currentLevel +1;
                 this.hasEaten += 1;
                 this.growCycles += 3;
+                this.scoreText.text = this.score.toString();
+                this.scoreTextShadow.text = this.score.toString();
                 if (this.hasEaten == this.mustEat) {
                     this.showExits = true;
                 }
