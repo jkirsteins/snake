@@ -312,6 +312,55 @@ package
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
 
+            if (FlxG.keys.justPressed("F1"))
+            {
+                this.currentLevel = -1;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F2"))
+            {
+                this.currentLevel = 0;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F3"))
+            {
+                this.currentLevel = 1;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F4"))
+            {
+                this.currentLevel = 2;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F5"))
+            {
+                this.currentLevel = 3;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F6"))
+            {
+                this.currentLevel = 4;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F7"))
+            {
+                this.currentLevel = 5;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F8"))
+            {
+                this.currentLevel = 6;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            } else if (FlxG.keys.justPressed("F9"))
+            {
+                this.currentLevel = 7;
+                this.clearedLevel()
+                loadLevel(this.currentLevel);
+            }
+
+
+
             /*
             if (this.newLevelState) {
                 if (FlxG.keys.justPressed('SPACE')) {
