@@ -43,8 +43,7 @@ package
         private var growCycles:int = 0;
         private var curVector:Point = new Point(1, 0);
         private var tmpVector:Point = new Point(1, 0);
-        private var oldUnwrappedHead:Point = null;
-        private var oldUnwrappedTmpPos:Point = null;
+        private var unwrappedSnake:Array = new Array();
 
         // Keep track of time
         private var t:Number = 0.0;
@@ -81,7 +80,7 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.06 - speedUp;
+                var step:Number = 0.4 - speedUp;
                 while (t > step) {
                     if (this.isExiting) {
                         if (!popSnake()) {
@@ -259,6 +258,14 @@ package
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
 
+            // Create our inital unwrapped snake
+            for (j = 0; j < 3; j++) {
+                var unwrappedPart:Point = new Point(this.snake[j].x / 8,
+                        this.snake[j].y / 8);
+                this.unwrappedSnake.push(unwrappedPart);
+            }
+            trace(unwrappedSnake);
+
             makeNomNom();
         }
 
@@ -386,46 +393,27 @@ package
             var newY:int = snake[0].y + curVector.y * 8;
             var hasWrapped:Boolean = false;
 
-            // Used to make sure everything is "unwrapped"
-            var unwrappedLastHead:Point = new Point(this.snake[0].x,
-                    this.snake[0].y);
-            var unwrappedTmpPos:Point = new Point(this.snake[1].x,
-                    this.snake[1].y);
+            // Update the unwrappedSnake
+            tmpPos = this.unwrappedSnake.pop()
+            tmpPos.x = this.unwrappedSnake[0].x + curVector.x;
+            tmpPos.y = this.unwrappedSnake[0].y + curVector.y;
+            this.unwrappedSnake.unshift(tmpPos);
 
             if (newX == 320 && doWrap) {
                 newX = 0;
-                unwrappedLastHead.x -= 320;
-                unwrappedTmpPos.x -= 320;
                 hasWrapped = true;
             }
             if (newX == -8 && doWrap && !hasWrapped) {
                 newX = 320 - 8;
-                unwrappedLastHead.x += 320;
-                unwrappedTmpPos.x += 320;
                 hasWrapped = true;
             }
             if (newY == 240 && doWrap && !hasWrapped) {
                 newY = 0;
-                unwrappedLastHead.y -= 240;
-                unwrappedTmpPos.y -= 240;
                 hasWrapped = true;
             }
             if (newY == -8 && doWrap && !hasWrapped) {
                 newY = 240 - 8;
-                unwrappedLastHead.y += 240;
-                unwrappedTmpPos.y += 240;
                 hasWrapped = true;
-            }
-            if (hasWrapped) {
-                if (!oldUnwrappedHead) {
-                    oldUnwrappedHead = unwrappedLastHead;
-                }
-            } else {
-                if (oldUnwrappedHead) {
-                    unwrappedTmpPos.x = oldUnwrappedHead.x;
-                    unwrappedTmpPos.y = oldUnwrappedHead.y;
-                    oldUnwrappedHead = null;
-                }
             }
 
             if (newX == curFood.x && newY == curFood.y) {
@@ -483,47 +471,47 @@ package
             }
 
             // Body / Turn
-            tmpPos = unwrappedTmpPos;
-
-            trace(tmpPos, unwrappedLastHead);
-            if (Math.sqrt(Math.pow((Math.abs(tmpPos.x - newX) / 8), 2) + 
-                    Math.pow((Math.abs(tmpPos.y - newY) / 8), 2)) != 2) {
+            var uwTail:Point = this.unwrappedSnake[2];
+            var uwBody:Point = this.unwrappedSnake[1];
+            var uwHead:Point = this.unwrappedSnake[0];
+            if (Math.sqrt(Math.pow(uwHead.x - uwTail.x, 2) + 
+                    Math.pow(uwHead.y - uwTail.y, 2)) != 2) {
                 tmpIndex = 12;
                 // Turn body part
-                if (unwrappedLastHead.x > tmpPos.x) {
+                if (uwBody.x > uwTail.x) {
                     // Right
-                    if (newY < unwrappedLastHead.y) {
+                    if (uwHead.y < uwBody.y) {
                         // up
                         tmpIndex += 0;
-                    } else if (newY > unwrappedLastHead.y) {
+                    } else if (uwHead.y > uwBody.y) {
                         // down
                         tmpIndex += 1;
                     }
-                } else if (unwrappedLastHead.x < tmpPos.x) {
+                } else if (uwBody.x < uwTail.x) {
                     // Left
-                    if (newY < unwrappedLastHead.y) {
+                    if (uwHead.y < uwBody.y) {
                         // up
                         tmpIndex += 5;
-                    } else if (newY > unwrappedLastHead.y) {
+                    } else if (uwHead.y > uwBody.y) {
                         // down
                         tmpIndex += 4;
                     }
                 } else {
-                    if (unwrappedLastHead.y < tmpPos.y) {
+                    if (uwBody.y < uwTail.y) {
                         // up
-                        if (newX > unwrappedLastHead.x) {
+                        if (uwHead.x > uwBody.x) {
                             // right
                             tmpIndex += 2;
-                        } else if (newX < unwrappedLastHead.x) {
+                        } else if (uwHead.x < uwBody.x) {
                             // left
-                            tmpIndex += 3
+                            tmpIndex += 3;
                         }
                     } else {
                         // Down
-                        if (newX > unwrappedLastHead.x) {
+                        if (uwHead.x > uwBody.x) {
                             // right
                             tmpIndex += 7;
-                        } else if (newX < unwrappedLastHead.x) {
+                        } else if (uwHead.x < uwBody.x) {
                             // left
                             tmpIndex += 6;
                         }
@@ -533,19 +521,20 @@ package
                 // Straight body part
                 // Right/left
                 tmpIndex = 4;
-                if (unwrappedLastHead.x > tmpPos.x) {
+                if (uwBody.x > uwTail.x) {
                     tmpIndex += 0;
-                } else if (unwrappedLastHead.x < tmpPos.x) {
+                } else if (uwBody.x < uwTail.x) {
                     tmpIndex += 1;
                 } else {
                     // Top/bottom
-                    if (unwrappedLastHead.y > tmpPos.y) {
+                    if (uwBody.y > uwTail.y) {
                         tmpIndex += 3;
                     } else {
                         tmpIndex += 2;
                     }
                 }
             }
+            trace(unwrappedSnake);
             snake[0].specificFrame(tmpIndex);
 
             // Head
