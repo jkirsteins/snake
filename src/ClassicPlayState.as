@@ -54,7 +54,7 @@ package
 		{
             // Load background
             this.bg = new buttSprite(160 - 4, 120 - 4);
-            //this.bg.scale = new Point(40, 30);
+            this.bg.scale = new Point(40, 30);
             this.bg.color = 0x787964;
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.ClassicLevel);
@@ -105,15 +105,14 @@ package
                         scoreText);
                 scoreTitle.alignment = "center";
                 scoreTitle.color = 0xFF0000;
-                scoreTitle.render();
+                //scoreTitle.render();
                 scoreText = new String(
                         "Press esc or enter to go back to the menu");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, scoreText);
                 levelTitle.alignment = "center";
                 levelTitle.color = 0xFF0000;
-                levelTitle.render();
+                //levelTitle.render();
             }
-            this.bg.render();
         }
 
         private function died():void
