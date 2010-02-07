@@ -13,6 +13,13 @@ package org.flixel.data
 		[Embed(source="key_0.png")] private var ImgKey0:Class;
 		[Embed(source="key_p.png")] private var ImgKeyP:Class;
 
+        override public function render(): void
+        {
+            if (FlxG.pause == false)
+                return;
+            super.render();
+        }
+
 		/**
 		 * Constructor.
 		 */

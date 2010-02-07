@@ -34,6 +34,7 @@ package
         {
             this.useDefaultHotKeys = true;
             FlxG.pause = false;
+            this.pause = new FlxPause();
         }
 
 		public function SnakeGame()

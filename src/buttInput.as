@@ -26,16 +26,14 @@ package
 
 		protected function onKeyUp(event:KeyboardEvent):void
         {
-            if (FlxG.pause) return;
-            
             if (event.keyCode == 16)
                 this.shift_pressed = false;
+
+            if (FlxG.pause) return;
         }
 
 		protected function onKeyDown(event:KeyboardEvent):void
 		{
-            if (event.keyCode == 80 && !SnakeGame.getInstance().in_dialog) return;
-
             if (event.keyCode == 13) return;
 
             if (event.keyCode == 8)
