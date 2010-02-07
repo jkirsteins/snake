@@ -3,10 +3,10 @@ package
 	import org.flixel.*;
     import caurina.transitions.*;
 
-	public class MenuState extends FlxState
+	public class MenuState extends FlxState implements IMenu
 	{
-        static private var _index: int = 0;
-        private var _oldIndex: int = 0; 
+        static private var _index: uint = 0;
+        private var _oldIndex: uint = 0; 
         private var _elements: Array;
 
         private var _pressedItem: Boolean = false;
@@ -48,7 +48,7 @@ package
 
 		}
 
-        public function getIndex(): int
+        public function getIndex(): uint
         {
             return MenuState._index;
         }

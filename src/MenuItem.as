@@ -4,8 +4,8 @@ package
 
     public class MenuItem extends FlxText
     {
-        private var _menu: MenuState = null;
         private var _thisIndex: int = 0;
+        private var _menu: IMenu;
 
         private var _intensity: Number = 0;
 
@@ -50,6 +50,7 @@ package
         override public function update(): void
         {
             super.update();
+
             if (FlxG.mouse.x > this.x && FlxG.mouse.x < this.x + this.width)
             {
                 if (FlxG.mouse.y > this.y && FlxG.mouse.y < this.y + this.height)
@@ -73,7 +74,7 @@ package
             this._thisIndex = i;
         }
 
-        public function MenuItem(Menu: MenuState, Caption: String, trigger: Function)
+        public function MenuItem(Menu: IMenu, Caption: String, trigger: Function)
         {
             super(0, 0, FlxG.width, Caption);
 

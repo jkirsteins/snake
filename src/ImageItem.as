@@ -12,6 +12,13 @@ package
             sprite.render();
         }
 
+        override public function update(): void
+        {
+            var expected: uint = (FlxG.mute ? 1 : 0);
+            if (expected != this._cf)
+                this.trigger(this);
+        }
+
         override public function getIntensityColor(): uint 
         {
             var col: uint = super.getIntensityColor();
@@ -33,7 +40,7 @@ package
             FlxG.mute = (this._cf == 1);
         }
 
-        public function ImageItem(  Menu: MenuState, 
+        public function ImageItem(  Menu: IMenu, 
                                     sheet: Class, 
                                     frameSize: uint, 
                                     trigger: Function)
