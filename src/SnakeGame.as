@@ -19,6 +19,8 @@ package
             FlxG.log("created");
             Score.fetch_scores(Score.TYPE_CLASSIC, HallOfFameState.onScoreLoad);
             Score.fetch_scores(Score.TYPE_AMAZO, HallOfFameState.onScoreLoad);
+
+            FlxG.playMusic(Sounds.SongOne, 1.0);
         }
 
         public function showDialog(dialog: FlxLayer): void
