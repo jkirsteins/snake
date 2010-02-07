@@ -43,7 +43,7 @@ package
         private var growCycles:int = 0;
         private var curVector:Point = new Point(1, 0);
         private var tmpVector:Point = new Point(1, 0);
-        private var unwrappedSnake:Array = new Array();
+        private var unwrappedSnake:Array = null;
 
         // Keep track of time
         private var t:Number = 0.0;
@@ -54,9 +54,8 @@ package
 		public function AmazoPlayState()
 		{
             // Load background
-            this.bg = new buttSprite(160 - 4, 120 - 4);
-            this.bg.scale = new Point(40, 30);
-            this.bg.color = 0x000000;
+            this.bg = new buttSprite(0, 0, Images.AmazoBG);
+            this.bg.color = 0xFFFFFF;
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.LevelImg);
             // Figure out how many levels there are
@@ -80,7 +79,7 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.4 - speedUp;
+                var step:Number = 0.1 - speedUp;
                 while (t > step) {
                     if (this.isExiting) {
                         if (!popSnake()) {
@@ -185,7 +184,7 @@ package
                     } else if (val == 0x000000) {
                         levelCollision[index] = 1;
                         levelSprites[index] = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
+                                gY % gameAreaHeight * 8, Images.AmazoBlock);
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
                         snakeStart = new Point(gX, gY % gameAreaHeight);
@@ -194,12 +193,12 @@ package
                         snakeEnd = new Point(gX, gY % gameAreaHeight);
                     } else if (val == 0x00FF00) {
                         var tmpSprite:buttSprite = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
-                        tmpSprite.color = 0x00FF00;
+                                gY % gameAreaHeight * 8, Images.AmazoExit);
+                        tmpSprite.color = 0xFFFFFF;
                         levelCollision[index] = 3;
                         levelExits[index] = tmpSprite;
                         levelSprites[index] = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
+                                gY % gameAreaHeight * 8, Images.AmazoBlock);
                     }
                 }
             }
@@ -259,12 +258,12 @@ package
             }
 
             // Create our inital unwrapped snake
+            this.unwrappedSnake = new Array();
             for (j = 0; j < 3; j++) {
                 var unwrappedPart:Point = new Point(this.snake[j].x / 8,
                         this.snake[j].y / 8);
                 this.unwrappedSnake.push(unwrappedPart);
             }
-            trace(unwrappedSnake);
 
             makeNomNom();
         }
@@ -534,8 +533,8 @@ package
                     }
                 }
             }
-            trace(unwrappedSnake);
             snake[0].specificFrame(tmpIndex);
+            trace(unwrappedSnake.length);
 
             // Head
             tmpIndex = 0;
