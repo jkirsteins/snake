@@ -15,5 +15,10 @@ package
         {
             return this._pixels.getPixel(x, y);
         }
+
+        public function currentFrame():uint
+        {
+            return this._curFrame;
+        }
     }
 }

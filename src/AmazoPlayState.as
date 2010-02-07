@@ -377,6 +377,28 @@ package
         {
             if (this.snake.length > 0) {
                 var tmp:buttSprite = snake.pop();
+
+                if (this.snake.length > 2) {
+                    // Tail
+                    var lastItem:int = snake.length - 1;
+                    var tmpPos:Point = new Point(snake[lastItem].x,
+                            snake[lastItem].y);
+                    var tmpIndex:uint = 8;
+                    // left or right
+                    if (snake[lastItem - 1].x < tmpPos.x) {
+                        tmpIndex += 1;
+                    } else if (snake[lastItem - 1].x > tmpPos.x) {
+                        tmpIndex += 0;
+                    } else {
+                        // Up or down
+                        if (snake[lastItem - 1].y < tmpPos.y) {
+                            tmpIndex += 2;
+                        } else {
+                            tmpIndex += 3;
+                        }
+                    }
+                    snake[lastItem].specificFrame(tmpIndex);
+                }
                 return true;
             } else {
                 return false;
@@ -534,7 +556,6 @@ package
                 }
             }
             snake[0].specificFrame(tmpIndex);
-            trace(unwrappedSnake.length);
 
             // Head
             tmpIndex = 0;
