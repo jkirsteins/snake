@@ -2,6 +2,9 @@ package
 {
     public class Images
     {
+        [Embed(source="/../assets/speakers.png")] 
+        static public var Speakers:Class;
+
         [Embed(source="/../assets/menubg.png")] 
         static public var MenuBG:Class;
         [Embed(source="/../assets/hof2.png")] 

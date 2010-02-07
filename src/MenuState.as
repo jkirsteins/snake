@@ -6,7 +6,10 @@ package
 	public class MenuState extends FlxState
 	{
         static private var _index: int = 0;
+        private var _oldIndex: int = 0; 
         private var _elements: Array;
+
+        private var _pressedItem: Boolean = false;
 
         private var normalColor: uint = 0x000000;
         private var hoverColor: uint = 0xFFFFFF;
@@ -20,22 +23,28 @@ package
             this._elements = new Array();
 
 
-            new MenuItem(this, "Amazosnake", function (): void 
+            new MenuItem(this, "Amazosnake", function (item: MenuItem): void 
                     { 
                         FlxG.switchState(AmazoPlayState); 
                     });
-            new MenuItem(this, "Classic snake", function (): void 
+            new MenuItem(this, "Classic snake", function (item: MenuItem): void 
                     { 
                         FlxG.switchState(ClassicPlayState); 
                     });
-            new MenuItem(this, "Hall of Fame", function (): void 
+            new MenuItem(this, "Hall of Fame", function (item: MenuItem): void 
                     { 
                         FlxG.switchState(HallOfFameState);
+                    });
+            
+            new ImageItem(this, Images.Speakers, 16, function (item: ImageItem): void
+                    {
+                    // in ImageItem.trigger
                     });
 
             var title: FlxText = new FlxText(40, FlxG.height - 30, FlxG.width/2, "amazosnake v0.8");
             title.alignment = "left";
             this.add(title);
+
 
 		}
 
@@ -44,10 +53,18 @@ package
             return MenuState._index;
         }
 
-        public function addItem(item: MenuItem): void
+        public function addItem(item: MenuItem, rx: uint = 0, ry: uint = 0): void
         {
-            item.x = 40;
-            item.y = FlxG.height - 70 + _elements.length * 10;
+            if (rx == 0)
+                item.x = 40;
+            else
+                item.x = rx;
+
+            if (ry == 0)
+                item.y = FlxG.height - 70 + _elements.length * item.height;
+            else
+                item.y = ry;
+
             item.alignment = "left";
 
             item.normalColor = 0x444444;
@@ -66,30 +83,51 @@ package
             this.add(item);
         }
 
+        public function setIndex(i: uint): void
+        {
+            this._oldIndex = MenuState._index;
+            MenuState._index = i;
+        }
+
+        public function pressItem(): void
+        {
+            this._pressedItem = true;
+        }
+
 		override public function update():void
 		{
-            var _oldIndex: int = MenuState._index;
-
 			super.update();
             if (FlxG.keys.justPressed('UP'))
-                MenuState._index = (MenuState._index == 0 ? 
+            {
+                this.setIndex(MenuState._index == 0 ? 
                                    this._elements.length-1 : 
                                    MenuState._index - 1);
+            }
 
             else if (FlxG.keys.justPressed('DOWN'))
-                MenuState._index = (MenuState._index == this._elements.length-1 ? 
+            {
+                this.setIndex(MenuState._index == this._elements.length-1 ? 
                                    0 : 
                                    MenuState._index + 1);
+            }
             else if (FlxG.keys.justPressed('ENTER'))
-                this._elements[MenuState._index].trigger();
+                this.pressItem();
 
-            if (FlxG.keys.justPressed('UP') || FlxG.keys.justPressed('DOWN'))
+            if (this._pressedItem)
             {
-                this._elements[_oldIndex].color = this._elements[_oldIndex].normalColor;
+                this._pressedItem = false;
+                this._elements[MenuState._index].trigger(
+                        this._elements[MenuState._index]
+                    );
+            }
+
+            if (this._oldIndex != MenuState._index)
+            {
+                this._elements[this._oldIndex].color = this._elements[this._oldIndex].normalColor;
 
                 //this._elements[MenuState._index].color = 0x00FF00;
                 Tweener.addTween(this._elements[MenuState._index], {intensity:1.0, time: 1, transition: "easeOutSine"});
-                Tweener.addTween(this._elements[_oldIndex], {intensity:0.0, time: 0, transition: "easeOutSine"});
+                Tweener.addTween(this._elements[this._oldIndex], {intensity:0.0, time: 0, transition: "easeOutSine"});
                 
             }
 		}
