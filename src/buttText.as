@@ -6,6 +6,8 @@ package
 
 	public class buttText extends FlxText
     {
+        public var with_shadow: Boolean = true;
+
         public function buttText(X: uint, Y: uint, W: uint, Text: String)
         {
             super(X, Y, W, Text);
@@ -13,6 +15,12 @@ package
 
         override public function render(): void
         {
+            if (!this.with_shadow)
+            {
+                super.render();
+                return;
+            }
+
             var old_color: uint = this.color;
 
             this.color = 0xFF000000;

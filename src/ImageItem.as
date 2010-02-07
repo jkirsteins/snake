@@ -17,6 +17,25 @@ package
             var expected: uint = (FlxG.mute ? 1 : 0);
             if (expected != this._cf)
                 this.trigger(this);
+
+            super.update();
+
+            if (FlxG.mouse.x > this.x && FlxG.mouse.x < this.x + this.width)
+            {
+                if (FlxG.mouse.y > this.y && FlxG.mouse.y < this.y + this.height)
+                {
+                    if (this._menu.getIndex() != this._thisIndex)
+                    {
+                        this._menu.setIndex(this._thisIndex);
+                    }
+
+                    if (this._menu.getIndex() == this._thisIndex &&
+                        FlxG.mouse.justPressed())
+                    {
+                        this._menu.pressItem();
+                    }
+                }
+            }
         }
 
         override public function getIntensityColor(): uint 

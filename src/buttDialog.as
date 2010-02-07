@@ -10,9 +10,16 @@ package
         protected function get text_lines(): uint { return 2; }
         protected function get shadow_offset(): uint { return 2; }
 
+        protected var with_shadow: Boolean = true;
+
+        protected var elements: Array;
+
         public function buttDialog(h1_text: String, h2_text: String)
         {
         	super();
+
+            this.elements = new Array();
+
 			scrollFactor.x = 0;
 			scrollFactor.y = 0;
 			var w:uint = 80;
@@ -24,18 +31,20 @@ package
 			x = (FlxG.width-bg.width)/2;
 			y = (FlxG.height-bg.height)/2;
 
-            add(shadow);
+            //add(shadow);
             add(bg);
 
             var h1: buttText;
             h1 = new buttText(0, 8, bg.width, h1_text);
             h1.alignment = "center";
             this.add(h1);
+            this.elements["h1"] = h1;
 
             var h2: buttText;
             h2 = new buttText(0, 24, bg.width, h2_text);
             h2.alignment = "center";
             this.add(h2);
+            this.elements["h2"] = h2;
 
             /*var inp: buttInput;
             inp = new buttInput(0, 42, bg.width, "center");

@@ -265,10 +265,7 @@ package org.flixel
 						return;
 					case 80:
                     {
-                        if (!this.in_dialog)
-                        {
-						    FlxG.pause = !FlxG.pause;
-                        }
+						FlxG.pause = !FlxG.pause;
                         return;
                     }
 					default: break;
@@ -306,7 +303,7 @@ package org.flixel
 		 */
 		protected function onFocus(event:Event=null):void
 		{
-			if(FlxG.pause)
+			if(FlxG.pause && this.useDefaultHotKeys)
 				FlxG.pause = false;
 		}
 		
@@ -315,7 +312,7 @@ package org.flixel
 		 */
 		protected function onFocusLost(event:Event=null):void
 		{
-			if(_logoComplete)
+			if(_logoComplete && this.useDefaultHotKeys)
 				FlxG.pause = true;
 		}
 		

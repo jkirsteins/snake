@@ -4,8 +4,8 @@ package
 
     public class MenuItem extends FlxText
     {
-        private var _thisIndex: int = 0;
-        private var _menu: IMenu;
+        protected var _thisIndex: int = 0;
+        protected var _menu: IMenu;
 
         private var _intensity: Number = 0;
 

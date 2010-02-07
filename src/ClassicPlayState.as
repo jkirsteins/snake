@@ -7,7 +7,7 @@ package
 	public class ClassicPlayState extends FlxState
 	{
         static public function get BLACK(): uint { return 0xFF32332C; }
-        static public function get WHITE(): uint { return 0xFF787964; }
+        static public function get WHITE(): uint { return 0xFF777863; }
 
         // Keeping track of stuff
         public var score:uint = 0;
@@ -126,7 +126,7 @@ package
             }
             else
             {
-                SnakeGame.getInstance().showDialog(new buttClassicEndDialog());
+                SnakeGame.getInstance().showDialog(new buttClassicEndDialog(this.score));
             }
         }
 
