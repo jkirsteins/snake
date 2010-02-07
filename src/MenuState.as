@@ -69,6 +69,8 @@ package
 
             item.normalColor = 0x444444;
             item.hoverColor = 0xFFFFFF;
+
+            item.width = 80;
             
             item.color = this.normalColor; //item.normalColor;
 

@@ -61,8 +61,8 @@ package
 
         override public function update(): void
         {
-            if (FlxG.keys.justPressed("ENTER"))
-                SnakeGame.getInstance().closeDialog();
+            //if (FlxG.keys.justPressed("ENTER"))
+            //    SnakeGame.getInstance().closeDialog();
 
             super.update();
         }

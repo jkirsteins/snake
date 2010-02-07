@@ -13,6 +13,16 @@ package
 
         public function get content(): String { return this.text.text; }
 
+        public function setShadow(sh: Boolean): void
+        {
+            this.text.with_shadow = sh;
+        }
+
+        public function setColor(col: uint): void
+        {
+            this.text.color = col;
+        }
+
 		public function buttInput(X: uint, Y: uint, W: uint, AL: String)
 		{
 			super();
