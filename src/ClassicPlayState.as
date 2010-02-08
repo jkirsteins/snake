@@ -79,7 +79,7 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.1 - speedUp;
+                var step:Number = 0.02 - speedUp;
                 while (t > step) {
                     processKeystroke();
                     this.curVector.x = this.tmpVector.x;
