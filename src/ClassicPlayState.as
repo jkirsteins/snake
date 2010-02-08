@@ -23,8 +23,8 @@ package
         private var keyStack:Array = new Array();
 
         // Level variables 
-        public var gameAreaWidth:int = 40;
-        public var gameAreaHeight:int = 30;
+        public var gameAreaWidth:int = 32;
+        public var gameAreaHeight:int = 24;
         public var doWrap:Boolean = true;
         private var levelCollision:Array = new Array(
                 gameAreaWidth * gameAreaHeight);
@@ -53,7 +53,7 @@ package
 		public function ClassicPlayState()
 		{
             // Load background
-            this.bg = new buttSprite(160 - 4, 120 - 4);
+            this.bg = new buttSprite(160 - 5, 120 - 5);
             this.bg.scale = new Point(40, 30);
             this.bg.color = 0x787964;
             // Load our level image
@@ -152,9 +152,10 @@ package
                         levelSprites[index] = null;
                     } else if (val == 0x000000) {
                         levelCollision[index] = 1;
-                        tmpSprite = new buttSprite(gX * 8,
-                                gY % gameAreaHeight * 8);
+                        tmpSprite = new buttSprite(gX * 10,
+                                gY % gameAreaHeight * 10);
                         tmpSprite.color = 0x32332C;
+                        tmpSprite.scale = new Point(1.25, 1.25);
                         levelSprites[index] = tmpSprite;
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
@@ -186,8 +187,9 @@ package
             for (var j:Number = 0; j < length + 1; j++) {
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
-                tmpSprite = new buttSprite(curPos.x * 8, curPos.y * 8)
+                tmpSprite = new buttSprite(curPos.x * 10, curPos.y * 10)
                 tmpSprite.color = 0x32332C;
+                tmpSprite.scale = new Point(1.25, 1.25);
                 snake.push(tmpSprite);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
@@ -291,16 +293,16 @@ package
 
         private function moveSnake():void
         {
-            var newX:int = snake[0].x + curVector.x * 8;
-            var newY:int = snake[0].y + curVector.y * 8;
+            var newX:int = snake[0].x + curVector.x * 10;
+            var newY:int = snake[0].y + curVector.y * 10;
             var hasWrapped:Boolean = false;
 
             if (newX == 320 && doWrap) {
                 newX = 0;
                 hasWrapped = true;
             }
-            if (newX == -8 && doWrap && !hasWrapped) {
-                newX = 320 - 8;
+            if (newX == -10 && doWrap && !hasWrapped) {
+                newX = 320 - 10;
                 hasWrapped = true;
             }
             if (newY == 240 && doWrap && !hasWrapped) {
@@ -308,7 +310,7 @@ package
                 hasWrapped = true;
             }
             if (newY == -8 && doWrap && !hasWrapped) {
-                newY = 240 - 8;
+                newY = 240 - 10;
                 hasWrapped = true;
             }
 
@@ -323,7 +325,7 @@ package
                 makeNomNom();
             }
 
-            if (isColliding(newX / 8, newY / 8)) {
+            if (isColliding(newX / 10, newY / 10)) {
                 died();
             }
 
@@ -332,14 +334,15 @@ package
             } else {
                 // pop snake
                 var tmp:buttSprite = snake.pop();
-                this.levelCollision[(tmp.y / 8) * gameAreaWidth 
-                        + (tmp.x / 8)] = 0;
+                this.levelCollision[(tmp.y / 10) * gameAreaWidth 
+                        + (tmp.x / 10)] = 0;
             }
 
             // Push snake
-            this.levelCollision[(newY / 8) *
-                    gameAreaWidth + (newX / 8)] = 2;
+            this.levelCollision[(newY / 10) *
+                    gameAreaWidth + (newX / 10)] = 2;
             var head:buttSprite = new buttSprite(newX, newY)
+            head.scale = new Point(1.25, 1.25);
             head.color = 0x32332C;
             snake.unshift(head);
         }
@@ -366,10 +369,12 @@ package
                 return;
             }
 
-            newX = newX * 8;
-            newY = newY * 8;
+            newX = newX * 10;
+            newY = newY * 10;
 
             curFood = new buttSprite(newX, newY, Images.ClassicFood);
+            curFood.offset = new Point(1, 1);
+            trace(curFood.offset);
         }
 	}
 }
