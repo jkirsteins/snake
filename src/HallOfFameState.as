@@ -11,6 +11,10 @@ package
         private var _index: uint = 0;
         private var _oldIndex: uint = 0;
         private var _pressedItem: Boolean = false;
+        private var _currentScoreType: uint = Score.TYPE_AMAZO;
+        private var _textArray:Array = new Array();
+        private var _spriteArray:Array = new Array();
+        private static var _newScoresAdded: Boolean = false;
 
         private var normalColor: uint = 0x000000;
         private var hoverColor: uint = 0xFFFFFF;
@@ -59,6 +63,7 @@ package
                 HallOfFameState._scores[type][String(i)] = arr[String(i)];
                 FlxG.log("Received name: " + arr[String(i)]["name"]);
             }
+            _newScoresAdded = true;
         }
 
         override public function update(): void
@@ -86,25 +91,40 @@ package
                 Tweener.addTween(this._elements[this._oldIndex], {intensity:0.0, time: 0, transition: "easeOutSine"});
                 
             }
+            for (x = 0; x < this._spriteArray.length; x++) {
+                this._spriteArray[x].render();
+            }
+            for (var x:int = 0; x < this._textArray.length; x++) {
+                this._textArray[x].render();
+            }
+
+            if (_newScoresAdded) {
+                _newScoresAdded = false;
+                if (this._currentScoreType == Score.TYPE_AMAZO) {
+                    setAmazosnakeScoresNoArgs();
+                } else if (this._currentScoreType == Score.TYPE_CLASSIC) {
+                    setClassicScoresNoArgs();
+                }
+            }
         }
 
         public function addScoreList(title_string: String, type: uint): void
         {
+            var title: FlxText = new FlxText((FlxG.width/4), 80, FlxG.width/2, title_string);
+            title.alignment="center";
+            this._textArray.push(title);
+
             for (var i: uint = 1; i <= 10; i++)
             {
-                var title: FlxText = new FlxText((FlxG.width/2) * (type-1), 80, FlxG.width/2, title_string);
-                title.alignment="center";
-                this.add(title);
-
-                var name: FlxText = new FlxText(0 + FlxG.width/2 * (type-1), 100 + i*10, FlxG.width/4, String(i) + ") " + 
+                var name: FlxText = new FlxText(0 + FlxG.width/4, 100 + i*10, FlxG.width/4, String(i) + ") " + 
                         HallOfFameState._scores[type][String(i)]["name"]);
                 name.alignment = "right";
-                this.add(name);
+                this._textArray.push(name);
 
-                var score: FlxText = new FlxText(FlxG.width/4 + FlxG.width/2 * (type - 1), 100 + i*10, FlxG.width/4, 
+                var score: FlxText = new FlxText(FlxG.width/2, 100 + i*10, FlxG.width/4, 
                         HallOfFameState._scores[type][String(i)]["score"]);
                 score.alignment = "left";
-                this.add(score);
+                this._textArray.push(score);
             }
         }
 
@@ -149,22 +169,64 @@ package
             this.add(item);
         }
 
+        // Why the fuck won't it let me set it to false or something :|
+        private function setAmazosnakeScoresNoArgs():void
+        {
+            trace("Updating Amazosnake scores!");
+            this._textArray.length = 0;
+            this.addScoreList("Amazosnake Highscores", Score.TYPE_AMAZO);
+            this._currentScoreType = Score.TYPE_AMAZO;
+        }
+
+        private function setClassicScoresNoArgs():void
+        { 
+            trace("Updating classic scores!");
+            this._textArray.length = 0;
+            this.addScoreList("Classic Highscores", Score.TYPE_CLASSIC);
+            this._currentScoreType = Score.TYPE_CLASSIC;
+        }
+
+
+        private function setAmazosnakeScores(item: MenuItem):void
+        {
+            trace("Updating Amazosnake scores!");
+            this._textArray.length = 0;
+            this.addScoreList("Amazosnake Highscores", Score.TYPE_AMAZO);
+            this._currentScoreType = Score.TYPE_AMAZO;
+        }
+
+        private function setClassicScores(item: MenuItem):void
+        { 
+            trace("Updating classic scores!");
+            this._textArray.length = 0;
+            this.addScoreList("Classic Highscores", Score.TYPE_CLASSIC);
+            this._currentScoreType = Score.TYPE_CLASSIC;
+        }
+
+        private function updateScores(item: MenuItem):void
+        {
+            Score.fetch_scores(Score.TYPE_CLASSIC, HallOfFameState.onScoreLoad);
+            Score.fetch_scores(Score.TYPE_AMAZO, HallOfFameState.onScoreLoad);
+        }
+
 		public function HallOfFameState()
 		{
             FlxG.showCursor(null);
 
-            this.add(new FlxSprite(0, 0, Images.HofBG));
+            this._spriteArray.push(new FlxSprite(0, 0, Images.HofBG));
 
             this.addScoreList("Amazosnake Highscores", Score.TYPE_AMAZO);
-            this.addScoreList("Classic Highscores", Score.TYPE_CLASSIC);
+            this._currentScoreType = Score.TYPE_AMAZO;
 
             this._elements = new Array();
 
+            new MenuItem(this, "Amazosnake", setAmazosnakeScores);
+            new MenuItem(this, "Classic", setClassicScores);
+            new MenuItem(this, "Refresh", updateScores);
             new MenuItem(this, "Back", function (item: MenuItem): void 
-                    { 
-                        FlxG.switchState(MenuState); 
-                    });
-
+            { 
+                FlxG.switchState(MenuState); 
+            });
         }
 
         static public function setScore(score: uint):void
