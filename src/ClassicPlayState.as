@@ -157,7 +157,6 @@ package
                                 gY % gameAreaHeight * 10);
                         tmpSprite.createGraphic(10, 10);
                         tmpSprite.color = 0x32332C;
-                        tmpSprite.offset = new Point(-1, -1);
                         levelSprites[index] = tmpSprite;
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
@@ -192,7 +191,6 @@ package
                 tmpSprite = new buttSprite(curPos.x * 10, curPos.y * 10)
                 tmpSprite.createGraphic(10, 10);
                 tmpSprite.color = 0x32332C;
-                tmpSprite.offset = new Point(-1, -1);
                 snake.push(tmpSprite);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
@@ -348,7 +346,6 @@ package
                     gameAreaWidth + (newX / 10)] = 2;
             var head:buttSprite = new buttSprite(newX, newY)
             head.createGraphic(10, 10);
-            head.offset = new Point(-1, -1);
             head.color = 0x32332C;
             snake.unshift(head);
         }

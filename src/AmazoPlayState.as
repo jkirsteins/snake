@@ -122,31 +122,32 @@ package
             this.scoreText.render();
            
             if (this.newLevelState) {
+                // Shadow
+                text = new String("Level ")
+                text = text.concat(currentLevel + 1);
+                levelTitle = new FlxText(1, 240*0.5 - 4, 320, 
+                        text);
+                levelTitle.alignment = "center";
+                levelTitle.color = 0x000000;
+                levelTitle.render();
+                text = new String("Press a direction key to begin!");
+                levelTitle = new FlxText(1, 240*0.5 + 6, 320, text);
+                levelTitle.alignment = "center";
+                levelTitle.color = 0x000000;
+                levelTitle.render();
+
+                // Text
                 var text:String = new String("Level ")
                 text = text.concat(currentLevel + 1);
                 var levelTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, 
                         text);
                 levelTitle.alignment = "center";
-                levelTitle.color = 0x00FF00;
+                levelTitle.color = 0xFFFFFF;
                 levelTitle.render();
                 text = new String("Press a direction key to begin!");
                 levelTitle = new FlxText(0, 240*0.5 + 5, 320, text);
                 levelTitle.alignment = "center";
-                levelTitle.color = 0x00FF00;
-                levelTitle.render();
-            } else if (this.dead) {
-                var scoreText:String = new String("Score: ");
-                scoreText = scoreText.concat(score);
-                var scoreTitle:FlxText = new FlxText(0, 240*0.5 - 5, 320, 
-                        scoreText);
-                scoreTitle.alignment = "center";
-                scoreTitle.color = 0xFF0000;
-                scoreTitle.render();
-                scoreText = new String(
-                        "Press esc or enter to go back to the menu");
-                levelTitle = new FlxText(0, 240*0.5 + 5, 320, scoreText);
-                levelTitle.alignment = "center";
-                levelTitle.color = 0xFF0000;
+                levelTitle.color = 0xFFFFFF;
                 levelTitle.render();
             }
             
