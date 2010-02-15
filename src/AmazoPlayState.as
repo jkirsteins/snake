@@ -10,7 +10,7 @@ package
         // Keeping track of stuff
         public var score:uint = 0;
         private var hasEaten:uint = 0;
-        private var mustEat:uint = 2;
+        private var mustEat:uint = 15;
         private var dead:Boolean = false;
         private var newLevelState:Boolean = true;
         private var currentLevel:uint = 0;
@@ -94,14 +94,16 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.1 - speedUp;
+                var step:Number = 0.1 - this.speedUp;
+                trace(step);
                 while (t >= step) {
                     if (this.isExiting) {
                         if (!popSnake()) {
                             clearedLevel();
+                            return;
                         }
                         if (this.speedUp < 0.02) {
-                            this.speedUp += 0.001;
+                            this.speedUp += 0.05;
                         }
                     } else {
                         processKeystroke();
@@ -162,11 +164,10 @@ package
                 this.scoreText.text = this.score.toString();
                 this.scoreTextShadow.text = this.score.toString();
                 this.isExiting = false;
-                this.speedUp = this.oldSpeedUp;
                 this.t = 0.0;
-                this.speedUp += 0.045 / (this.levelCount + 1);
                 this.currentLevel += 1;
                 this.newLevelState = true;
+                this.speedUp = (0.045 / (this.levelCount + 1)) * (this.currentLevel + 1);
                 loadLevel(this.currentLevel);
             } else {
                 // No more levels
@@ -210,6 +211,7 @@ package
             // Figure out the original syntax
             var snakeStart:Point = null;
             var snakeEnd:Point = null;
+
             for (var gY:uint = gameAreaHeight * num; gY < gameAreaHeight * 
                     (num + 1); gY++) {
                 for (var gX:uint = 0; gX < gameAreaWidth; gX++) {
@@ -474,7 +476,6 @@ package
                 this.scoreTextShadow.text = this.score.toString();
                 if (this.hasEaten == this.mustEat) {
                     this.showExits = true;
-                    this.oldSpeedUp = this.speedUp;
                 }
                 makeNomNom();
             }

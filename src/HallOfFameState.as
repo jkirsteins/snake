@@ -116,12 +116,16 @@ package
 
             for (var i: uint = 1; i <= 10; i++)
             {
-                var name: FlxText = new FlxText(0 + FlxG.width/4, 100 + i*10, FlxG.width/4, String(i) + ") " + 
+                var num: FlxText = new FlxText(0 + FlxG.width/4 - 45, 100 + i*10, FlxG.width/4, String(i) + ")");
+                num.alignment = "right";
+                this._textArray.push(num);
+
+                var name: FlxText = new FlxText(0 + FlxG.width/4 + 40, 100 + i*10, FlxG.width/4,
                         HallOfFameState._scores[type][String(i)]["name"]);
-                name.alignment = "right";
+                name.alignment = "left";
                 this._textArray.push(name);
 
-                var score: FlxText = new FlxText(FlxG.width/2, 100 + i*10, FlxG.width/4, 
+                var score: FlxText = new FlxText(FlxG.width/2 + 30, 100 + i*10, FlxG.width/4, 
                         HallOfFameState._scores[type][String(i)]["score"]);
                 score.alignment = "left";
                 this._textArray.push(score);
