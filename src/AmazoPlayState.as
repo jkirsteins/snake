@@ -10,7 +10,7 @@ package
         // Keeping track of stuff
         public var score:uint = 0;
         private var hasEaten:uint = 0;
-        private var mustEat:uint = 8;
+        private var mustEat:uint = 2;
         private var dead:Boolean = false;
         private var newLevelState:Boolean = true;
         private var currentLevel:uint = 0;
@@ -95,7 +95,7 @@ package
                 t += FlxG.elapsed;
                 curFood.render();
                 var step:Number = 0.1 - speedUp;
-                while (t > step) {
+                while (t >= step) {
                     if (this.isExiting) {
                         if (!popSnake()) {
                             clearedLevel();
@@ -155,7 +155,6 @@ package
             if (!this.isExiting) {
                 // Exit animation
                 this.isExiting = true;
-                //this.oldSpeedUp = this.speedUp;
                 return;
             } else if (this.currentLevel < this.levelCount) {
                 // Next level
@@ -165,13 +164,13 @@ package
                 this.isExiting = false;
                 this.speedUp = this.oldSpeedUp;
                 this.t = 0.0;
-                this.speedUp += 0.02 / (this.levelCount + 1);
+                this.speedUp += 0.045 / (this.levelCount + 1);
                 this.currentLevel += 1;
                 this.newLevelState = true;
                 loadLevel(this.currentLevel);
             } else {
                 // No more levels
-                FlxG.switchState(MenuState);
+                wonGame();
             }
         }
 
@@ -190,9 +189,22 @@ package
             }
         }
 
+        private function wonGame():void
+        {
+            if (Score.check(Score.TYPE_AMAZO, this.score))
+            {
+                SnakeGame.getInstance().showDialog(
+                        new buttAmazoInputDialog(Score.TYPE_AMAZO, this.score));
+            }
+            else
+            {
+                SnakeGame.getInstance().showDialog(new buttAmazoWonDialog());
+            }
+        }
+
         private function loadLevel(num:uint):void
         {
-            this.keyStack = new Array();
+            this.keyStack.length = 0;
             this.hasEaten = 0;
             this.showExits = false;
             // Figure out the original syntax
@@ -234,7 +246,7 @@ package
             }
 
             // Create a new snake
-            this.snake = new Array();
+            this.snake.length = 0;
             
             // Direction vector
             var v:Point = new Point(snakeEnd.x - snakeStart.x,
@@ -320,71 +332,6 @@ package
         {
             if (FlxG.keys.justPressed("ESC"))
                 FlxG.switchState(MenuState);
-
-            if (FlxG.keys.justPressed("F1"))
-            {
-                this.clearedLevel()
-                this.currentLevel = 0;
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F2"))
-            {
-                this.currentLevel = 0;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F3"))
-            {
-                this.currentLevel = 1;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F4"))
-            {
-                this.currentLevel = 2;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F5"))
-            {
-                this.currentLevel = 3;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F6"))
-            {
-                this.currentLevel = 4;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F7"))
-            {
-                this.currentLevel = 5;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F8"))
-            {
-                this.currentLevel = 6;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            } else if (FlxG.keys.justPressed("F9"))
-            {
-                this.currentLevel = 7;
-                this.clearedLevel()
-                loadLevel(this.currentLevel);
-            }
-
-
-
-            /*
-            if (this.newLevelState) {
-                if (FlxG.keys.justPressed('SPACE')) {
-                    this.newLevelState = false;
-                }
-                return;
-            }
-            */
-
-            if (this.dead) {
-                if (FlxG.keys.justPressed('ENTER')) {
-                    FlxG.switchState(MenuState);
-                }
-                return;
-            }
 
             var didPush:Boolean = false;
             if (this.keyStack.length < 5) {
@@ -527,15 +474,16 @@ package
                 this.scoreTextShadow.text = this.score.toString();
                 if (this.hasEaten == this.mustEat) {
                     this.showExits = true;
+                    this.oldSpeedUp = this.speedUp;
                 }
                 makeNomNom();
             }
             if (this.hasEaten > this.mustEat) {
-                if (this.speedUp < 0.02) {
-                    this.speedUp += 0.0001;
+                if (this.speedUp <= 0.07) {
+                    this.speedUp += 0.0002;
                 }
             }
-
+            
             if (isColliding(newX / 8, newY / 8)) {
                 if ((this.levelCollision[(newY / 8) *
                         gameAreaWidth + (newX / 8)] == 3) && this.showExits) {

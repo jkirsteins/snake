@@ -54,8 +54,9 @@ package
 		{
             // Load background
             this.bg = new buttSprite(160 - 5, 120 - 5);
-            this.bg.scale = new Point(40, 30);
+            this.bg.createGraphic(320, 240);
             this.bg.color = 0x787964;
+            this.bg.offset = new Point(156, 116);
             // Load our level image
             this.levelImage = new buttSprite(0, 0, Images.ClassicLevel);
             // Figure out how many levels there are
@@ -79,8 +80,8 @@ package
             if ((!this.newLevelState) && (!this.dead)) {
                 t += FlxG.elapsed;
                 curFood.render();
-                var step:Number = 0.02 - speedUp;
-                while (t > step) {
+                var step:Number = 0.1 - speedUp;
+                while (t >= step) {
                     processKeystroke();
                     this.curVector.x = this.tmpVector.x;
                     this.curVector.y = this.tmpVector.y;
@@ -154,8 +155,9 @@ package
                         levelCollision[index] = 1;
                         tmpSprite = new buttSprite(gX * 10,
                                 gY % gameAreaHeight * 10);
+                        tmpSprite.createGraphic(10, 10);
                         tmpSprite.color = 0x32332C;
-                        tmpSprite.scale = new Point(1.25, 1.25);
+                        tmpSprite.offset = new Point(-1, -1);
                         levelSprites[index] = tmpSprite;
                     } else if (val == 0xFF0000) {
                         levelCollision[index] = 0;
@@ -188,8 +190,9 @@ package
                 var curPos:Point = new Point(snakeStart.x + (v.x * j),
                         snakeStart.y + (v.y * j));
                 tmpSprite = new buttSprite(curPos.x * 10, curPos.y * 10)
+                tmpSprite.createGraphic(10, 10);
                 tmpSprite.color = 0x32332C;
-                tmpSprite.scale = new Point(1.25, 1.25);
+                tmpSprite.offset = new Point(-1, -1);
                 snake.push(tmpSprite);
                 this.levelCollision[curPos.y * gameAreaWidth + curPos.x] = 2;
             }
@@ -309,7 +312,7 @@ package
                 newY = 0;
                 hasWrapped = true;
             }
-            if (newY == -8 && doWrap && !hasWrapped) {
+            if (newY == -10 && doWrap && !hasWrapped) {
                 newY = 240 - 10;
                 hasWrapped = true;
             }
@@ -318,10 +321,12 @@ package
                 this.score += 21 + (5 * this.hasEaten);
                 this.hasEaten += 1;
                 this.growCycles += 3;
-                if (this.speedUp < 0.07) {
-                    trace(this.speedUp);
+                if (this.hasEaten < 15) {
                     this.speedUp += 0.002;
+                } else if (this.speedUp <= 0.065) {
+                    this.speedUp += 0.0005;
                 }
+                trace(0.1 - this.speedUp);
                 makeNomNom();
             }
 
@@ -342,7 +347,8 @@ package
             this.levelCollision[(newY / 10) *
                     gameAreaWidth + (newX / 10)] = 2;
             var head:buttSprite = new buttSprite(newX, newY)
-            head.scale = new Point(1.25, 1.25);
+            head.createGraphic(10, 10);
+            head.offset = new Point(-1, -1);
             head.color = 0x32332C;
             snake.unshift(head);
         }
@@ -373,8 +379,6 @@ package
             newY = newY * 10;
 
             curFood = new buttSprite(newX, newY, Images.ClassicFood);
-            curFood.offset = new Point(1, 1);
-            trace(curFood.offset);
         }
 	}
 }
