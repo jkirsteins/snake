@@ -35,9 +35,6 @@ package
         private var levelImage:buttSprite = null;
         private var levelCount:uint = 0;
 
-        // Eat sound
-        private var eatSound: FlxSound = null;
-        
         // Food variables
         private var curFood:buttSprite = null;
         
@@ -79,10 +76,6 @@ package
             this.scoreTextShadow.color = 0x000000;
             this.scoreTextShadow.alpha = 0.5;
             this.scoreTextShadow.alignment = "right";
-
-            // Eat sound
-            this.eatSound = new FlxSound();
-            this.eatSound.loadEmbedded(Sounds.Eat, false);
 
             var _input:TextInput = new TextInput();
             _input.editable = true;
@@ -475,7 +468,7 @@ package
             }
 
             if (newX == curFood.x && newY == curFood.y) {
-                this.eatSound.play();
+                FlxG.play(Sounds.Eat);
                 this.score += 20 * (this.currentLevel + 1) + 
                         this.currentLevel +1;
                 this.hasEaten += 1;
