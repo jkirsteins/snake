@@ -14,6 +14,11 @@ package
         private var _currentScoreType: uint = Score.TYPE_AMAZO;
         private var _textArray:Array = new Array();
         private var _spriteArray:Array = new Array();
+        private var _isLoading:Boolean = false;
+        private var _throbber:FlxSprite = null;
+        private var _ct: Number = 0;
+        private var _curFrame: uint = 0;
+        private var _refreshText: FlxText = null;
         private static var _newScoresAdded: Boolean = false;
 
         private var normalColor: uint = 0x000000;
@@ -75,6 +80,7 @@ package
             else if (FlxG.keys.justPressed('ENTER'))
                 this.pressItem();
 
+
             if (this._pressedItem)
             {
                 this._pressedItem = false;
@@ -91,21 +97,38 @@ package
                 Tweener.addTween(this._elements[this._oldIndex], {intensity:0.0, time: 0, transition: "easeOutSine"});
                 
             }
-            for (x = 0; x < this._spriteArray.length; x++) {
-                this._spriteArray[x].render();
-            }
-            for (var x:int = 0; x < this._textArray.length; x++) {
-                this._textArray[x].render();
-            }
 
             if (_newScoresAdded) {
                 _newScoresAdded = false;
+                this._isLoading = false;
                 if (this._currentScoreType == Score.TYPE_AMAZO) {
                     setAmazosnakeScoresNoArgs();
                 } else if (this._currentScoreType == Score.TYPE_CLASSIC) {
                     setClassicScoresNoArgs();
                 }
             }
+
+            for (x = 0; x < this._spriteArray.length; x++) {
+                this._spriteArray[x].render();
+            }
+
+            if (this._isLoading) {
+                this._ct += FlxG.elapsed;
+                if (this._ct >= 0.15) {
+                    this._curFrame = (this._curFrame + 1) % 8;
+                    trace(this._curFrame);
+                    this._throbber.specificFrame(this._curFrame);
+                    this._ct -= 0.15;
+                }
+                this._throbber.render();
+                this._refreshText.render();
+                return;
+            }
+
+            for (var x:int = 0; x < this._textArray.length; x++) {
+                this._textArray[x].render();
+            }
+
         }
 
         public function addScoreList(title_string: String, type: uint): void
@@ -209,6 +232,7 @@ package
 
         private function updateScores(item: MenuItem):void
         {
+            this._isLoading = true;
             Score.fetch_scores(Score.TYPE_CLASSIC, HallOfFameState.onScoreLoad);
             Score.fetch_scores(Score.TYPE_AMAZO, HallOfFameState.onScoreLoad);
         }
@@ -223,6 +247,13 @@ package
             this._currentScoreType = Score.TYPE_AMAZO;
 
             this._elements = new Array();
+
+            this._throbber = new FlxSprite(320 / 2 - 12, 150);
+            this._throbber.loadGraphic(Images.Throbber, true, false, 24, 24, false);
+            var tmp: Array = new Array([1, 2, 3]);
+
+            this._refreshText = new FlxText(0, 179, 320, "Refreshing...");
+            this._refreshText.alignment = "center";
 
             new MenuItem(this, "Amazosnake", setAmazosnakeScores);
             new MenuItem(this, "Classic", setClassicScores);

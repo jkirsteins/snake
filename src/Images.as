@@ -5,6 +5,9 @@ package
         [Embed(source="/../assets/speakers.png")] 
         static public var Speakers:Class;
 
+        [Embed(source="/../assets/throbber.png")]
+        static public var Throbber:Class;
+
         [Embed(source="/../assets/menubg.png")] 
         static public var MenuBG:Class;
         [Embed(source="/../assets/hof2.png")] 
